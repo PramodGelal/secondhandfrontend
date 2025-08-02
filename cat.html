@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SecondHand Market</title>
+
+ 
+  <link rel="stylesheet" href="items.css" />
+  <link rel="stylesheet" href="navigation_bar.css" />
+  <link rel="stylesheet" href="categories_body.css" />
+  <link rel="icon" href="favicon-96x96.png" type="image/png" />
+   <link rel="stylesheet" href="header-footer.css" />
+  
+  <style>
+    /* Optional: highlight active category */
+    .category-card.active {
+      border: 2px solid #009688;
+      background-color: #e0f2f1;
+    }
+    
+    /* Style for disabled buy button */
+    .item-details button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+    
+    /* Stock status styling */
+    .stock-status {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+    
+  </style>
+</head>
+<body>
+
+
+<div class="top-header" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background-color: black; color: white;">
+
+  <!-- Logo -->
+  <a href="home.html" style="text-decoration: none; color: yellow; font-weight: bold; font-size: 24px; cursor: pointer;">
+    <div class="logo" data-i18n="site.logo">SecondHand</div>
+  </a>
+
+  <!-- Search Bar + Language -->
+  <div style="display: flex; align-items: center; gap: 15px;">
+     <div class="search-bar">
+      <select id="search-category" aria-label="Category Filter">
+        <option value="All" data-i18n="site.categoryAll">All</option>
+        <option value="Electronics" data-i18n="site.categoryElectronics">Electronics</option>
+        <option value="Books" data-i18n="site.categoryBooks">Books</option>
+        <option value="Clothing" data-i18n="site.categoryClothing">Clothing</option>
+      </select>
+      <input
+        type="text"
+        id="search-input"
+        placeholder=""
+        data-i18n-placeholder="site.searchPlaceholder"
+        aria-label="Search items"
+      />
+      <button onclick="handleSearch()" aria-label="Search Button" data-i18n="site.searchBtn">🔍</button>
+    </div>
+
+
+    <!-- Language Selector -->
+    <select id="languageSelect" aria-label="Select Language"
+      style="padding: 6px 10px; border-radius: 5px; border: 1px solid #ccc; cursor: pointer;">
+      <option value="en">English</option>
+      <option value="np">नेपाली</option>
+    </select>
+  </div>
+
+<div class="right-section" style="display: flex; flex-direction: column; align-items: flex-end; gap: 12px; position: relative;">
+ <div> <button id="messageBtn" title="Messages"
+    style="font-size: 18px; background-color: black; color: yellow; border: 2px solid yellow; border-radius: 50%; width: 36px; height: 36px; cursor: pointer;">💬</button>
+ 
+ <button id="historyBtn"
+      style="font-size: 18px; background-color: black; color: yellow; border: 2px solid yellow; border-radius: 50%; width: 36px; height: 36px; cursor: pointer;">
+      📜
+    </button>
+    <button onclick="toggleSettingsMenu()" title="Settings"
+    style="font-size: 18px; background-color: black; color: yellow; border: 2px solid yellow; border-radius: 50%; width: 36px; height: 36px; cursor: pointer;">⚙️</button>
+
+  <div id="settingsMenu" style="display: none; position: absolute; top: 100%; right: 0; background: white; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000;">
+       <a href="#" onclick="redirectNoBack('login1.html')" data-i18n="site.signIn" style="display: block; padding: 8px 12px; text-decoration: none; color: black;">Sign in</a>
+   <a href="#" onclick="redirectNoBack('sellerlogin.html')"
+    style="display: block; padding: 8px 12px; text-decoration: none; color: black;">Login as seller</a>
+    <button onclick="logout()" style="display: block; width: 100%; text-align: left; padding: 8px 12px; border: none; background: none; color: black; cursor: pointer;">Log out</button>
+  </div></div>
+  <div id="welcomeMessage" style="color: yellow; font-size: 14px;">Welcome, User</div>
+
+ 
+</div>
+
+
+</div>
+
+
+
+
+<!-- NAVIGATION BAR -->
+<div class="nav-bar" style="background-color: rgb(223, 243, 110); padding: 10px 0;">
+  <div class="nav-links" style="display: flex; justify-content: left; gap: 30px; padding: 10px;">
+    <a href="home.html" data-i18n="site.home" style="text-decoration: none; color: black; font-weight: bold;">Home</a>
+    <a href="cat.html" data-i18n="site.categories" style="text-decoration: none; color: black; font-weight: bold;">Categories</a>
+    <a href="support.html" data-i18n="site.support" style="text-decoration: none; color: black; font-weight: bold;">Support</a>
+  </div>
+</div>
+
+
+
+<!-- CHATBOX -->
+<div id="messageBox"
+  style="display: none; position: fixed; top: 80px; right: 20px; width: 350px; height: 500px; background: white; border: 2px solid yellow; box-shadow: 0 0 12px rgba(0,0,0,0.3); border-radius: 10px; z-index: 999; overflow: hidden; cursor: move;"
+  onmousedown="dragElement(this)">
+
+  <div style="display: flex; justify-content: space-between; align-items: center; background-color: yellow; padding: 6px 10px; border-bottom: 1px solid #ccc;">
+    <h4 id="chatname" style="color: black; margin: 0;">Your Messages</h4>
+    <div>
+     
+      <button title="Close" onclick="document.getElementById('messageBox').style.display='none'" style="background: none; border: none; font-weight: bold; cursor: pointer;">❌</button>
+    </div>
+  </div>
+
+  <div id="messagesArea" style="height: 440px; overflow-y: auto; padding: 10px;">
+    <!-- Messages will appear here -->
+  </div>
+</div>
+<script>
+ function redirectNoBack(url) {
+    window.location.replace(url); // replaces current page in history
+  }
+
+function dragElement(elmnt) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+  const header = document.getElementById("messageHeader");
+  if (header) {
+    header.onmousedown = dragMouseDown;
+  } else {
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+
+    // If clicked element is input, textarea, or contenteditable, do NOT drag
+    const target = e.target;
+    if (
+      target.tagName === "INPUT" || 
+      target.tagName === "TEXTAREA" || 
+      target.isContentEditable
+    ) {
+      return; // allow normal typing/focus
+    }
+
+    e.preventDefault();
+
+    // Get the initial mouse cursor position
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+
+    // Calculate new cursor position
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    // Set the element's new position
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+
+
+</script>
+
+<div id="historyContainer"
+  style="display: none; position: fixed; top: 100px; left: calc(50% - 450px); width: 500px; max-width: 100%; background: white; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.2); border-left: 5px solid yellow; z-index: 1000;">
+
+  <!-- Draggable header with title and close button -->
+  <div id="historyHeader" style="cursor: move; padding: 12px 20px; background: yellow; border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+    <h2 style="margin: 0; font-weight: bold; color: black;">Purchase & Selling History</h2>
+    <button id="closeHistoryBtn" 
+      style="background: none; border: none; font-size: 20px; font-weight: bold; cursor: pointer; color: black;" 
+      title="Close">✖</button>
+  </div>
+
+  <div id="historyList" style="padding: 20px; max-height: 400px; overflow-y: auto;">
+    <!-- Your purchase & selling history content goes here -->
+  </div>
+  
+</div>
+
+<script>
+  function dragElement(elmnt, handle) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+    handle.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault();
+
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+
+      document.onmouseup = closeDragElement;
+      document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+
+      // Calculate new position within viewport bounds (optional)
+      let newTop = elmnt.offsetTop - pos2;
+      let newLeft = elmnt.offsetLeft - pos1;
+
+      // Optional: keep inside window boundaries
+      const minLeft = 0;
+      const minTop = 0;
+      const maxLeft = window.innerWidth - elmnt.offsetWidth;
+      const maxTop = window.innerHeight - elmnt.offsetHeight;
+
+      if (newLeft < minLeft) newLeft = minLeft;
+      if (newTop < minTop) newTop = minTop;
+      if (newLeft > maxLeft) newLeft = maxLeft;
+      if (newTop > maxTop) newTop = maxTop;
+
+      elmnt.style.top = newTop + "px";
+      elmnt.style.left = newLeft + "px";
+    }
+
+    function closeDragElement() {
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+
+  const historyContainer = document.getElementById("historyContainer");
+  const historyHeader = document.getElementById("historyHeader");
+
+  dragElement(historyContainer, historyHeader);
+
+  // Close button hides the container
+  document.getElementById("closeHistoryBtn").onclick = () => {
+    historyContainer.style.display = "none";
+  };
+  function dragElement(elmnt) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+  const header = document.getElementById("messageHeader");
+  if (header) {
+    header.onmousedown = dragMouseDown;
+  } else {
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+
+    // If clicked element is input, textarea, or contenteditable, do NOT drag
+    const target = e.target;
+    if (
+      target.tagName === "INPUT" || 
+      target.tagName === "TEXTAREA" || 
+      target.isContentEditable
+    ) {
+      return; // allow normal typing/focus
+    }
+
+    e.preventDefault();
+
+    // Get the initial mouse cursor position
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+
+    // Calculate new cursor position
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    // Set the element's new position
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+  function toggleSettingsMenu() {
+    const menu = document.getElementById("settingsMenu");
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+  }
+
+  // Optional: Hide the menu when clicking outside
+  document.addEventListener("click", function (event) {
+    const menu = document.getElementById("settingsMenu");
+    const button = event.target.closest("button[title='Settings']");
+    if (!menu.contains(event.target) && !button) {
+      menu.style.display = "none";
+    }
+  });
+
+  // Dummy logout function
+  function logout() {
+    localStorage.clear(); // or localStorage.removeItem("user_data");
+    alert("Logged out successfully!");
+    window.location.href = "home.html"; // Redirect after logout
+  }
+
+  function minimizeChat() {
+    document.getElementById('messagesArea').style.display = 'none';
+  }
+
+  function maximizeChat() {
+    document.getElementById('messagesArea').style.display = 'block';
+  }
+</script>
+
+  
+  
+
+  <!-- Category Filter -->
+  <section class="categories">
+    <h2 data-i18n="site.browseByCategory">📂 Browse by Category</h2>
+    <div class="category-list" id="category-list">
+      <div class="category-card" onclick="filterByCategory(this, 'Electronics')">
+        <img src="./laptop.png" alt="Electronics" />
+        <span data-i18n="site.categoryElectronics">Electronics</span>
+      </div>
+      <div class="category-card" onclick="filterByCategory(this, 'Books')">
+        <img src="./book.png" alt="Books" />
+        <span data-i18n="site.categoryBooks">Books</span>
+      </div>
+      <div class="category-card" onclick="filterByCategory(this, 'Clothing')">
+        <img src="./t-shirt.png" alt="Clothing" />
+        <span data-i18n="site.categoryClothing">Clothing</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Selected Category Name -->
+  <div id="selected-category" data-i18n="site.allItems">All Items</div>
+
+  <!-- Item Display Section -->
+  <section class="items" id="items-container">
+    <!-- Items will be loaded dynamically here -->
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <h3 data-i18n="site.footerTitle">SecondHand</h3>
+      <div class="contact-info">
+        📧 <span data-i18n="site.emailLabel">Email</span>: 
+        <a href="mailto:secondarynp@gmail.com">secondarynp@gmail.com</a><br />
+        📞 <span data-i18n="site.contactLabel">Contact</span>: 
+        <a href="tel:+9779866297346">9866297346</a>
+      </div>
+      <div class="copyright" data-i18n="site.copyright">
+        &copy; 2025 SecondHand Market. All rights reserved.
+      </div>
+    </div>
+  </footer>
+  <script src="chat_ko_lagi.js"></script>
+
+  <!-- i18next library -->
+  <script src="https://unpkg.com/i18next@22.4.7/i18next.min.js"></script>
+
+  <script>
+        window.addEventListener("DOMContentLoaded", () => {
+  const welcomeDiv = document.getElementById("welcomeMessage");
+
+  const loginMode = localStorage.getItem("mode"); // 'seller' or 'user'
+  const loginByName = localStorage.getItem("user_data"); // person name or email
+  const isLoggedIn = localStorage.getItem("user_login_by") !== null;
+
+  if (isLoggedIn && loginMode && loginByName) {
+    const modeLabel = loginMode === "seller" ? "Sell" : "Buy";
+    welcomeDiv.textContent = `Welcome to ${modeLabel}, ${loginByName}`;
+  } else {
+    welcomeDiv.textContent = "";
+  }
+});
+       function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user_login_by");
+    localStorage.removeItem("mode");
+    localStorage.removeItem("user_data");
+  }
+    let allItems = [];
+
+    // Translation resources
+    const resources = {
+      en: {
+        translation: {
+          site: {
+            logo: "SecondHand",
+            signIn: "Sign In",
+            searchPlaceholder: "Search items",
+            searchBtn: "🔍",
+            categoryAll: "All",
+            categoryElectronics: "Electronics",
+            categoryBooks: "Books",
+            categoryClothing: "Clothing",
+            home: "☰ Home",
+            categories: "Categories",
+            sell: "Sell",
+            support: "Support",
+            browseByCategory: "📂 Browse by Category",
+            allItems: "All Items",
+            footerTitle: "SecondHand",
+            emailLabel: "Email",
+            contactLabel: "Contact",
+            copyright: "© 2025 SecondHand Market. All rights reserved.",
+            buyNow: "Buy Now",
+            selectedCategory: "{{category}} selected",
+            searchResults: "Search: {{query}} in {{category}}",
+            inStock: "in stock",
+            outOfStock: "Out of stock",
+            noItemsFound: "No items found"
+          }
+        }
+      },
+      np: {
+        translation: {
+          site: {
+            logo: "सेकेन्डह्याण्ड",
+            signIn: "लगइन गर्नुहोस्",
+            searchPlaceholder: "सामान खोज्नुहोस्",
+            searchBtn: "🔍",
+            categoryAll: "सबै",
+            categoryElectronics: "इलेक्ट्रोनिक्स",
+            categoryBooks: "किताबहरू",
+            categoryClothing: "लुगाफाटा",
+            home: "☰ गृहपृष्ठ",
+            categories: "श्रेणीहरू",
+            sell: "बेच्नुहोस्",
+            support: "सहयोग",
+            browseByCategory: "📂 श्रेणी अनुसार ब्राउज गर्नुहोस्",
+            allItems: "सबै सामानहरू",
+            footerTitle: "सेकेन्डह्याण्ड",
+            emailLabel: "इमेल",
+            contactLabel: "सम्पर्क",
+            copyright: "© २०२५ सेकेन्डह्याण्ड बजार। सर्वाधिकार सुरक्षित।",
+            buyNow: "अहिले किन्नुहोस्",
+            selectedCategory: "{{category}} चयन गरियो",
+            searchResults: "खोजी: {{query}} मा {{category}}",
+            inStock: "स्टकमा उपलब्ध",
+            outOfStock: "स्टक सकियो",
+            noItemsFound: "कुनै सामान फेला परेन"
+          }
+        }
+      }
+    };
+
+    // Initialize i18next
+   const savedLang = localStorage.getItem("selectedLanguage") || "en"; // Load saved or default to 'en'
+
+// Initialize i18next
+i18next.init({
+  lng: savedLang,
+  debug: false,
+  resources: resources
+}, function (err, t) {
+  updateContent();
+  loadItems();
+
+  // Set dropdown value to saved language
+  const languageSelect = document.getElementById("languageSelect");
+  if (languageSelect) {
+    languageSelect.value = savedLang;
+  }
+});
+
+
+    // Update all translatable content on the page
+    function updateContent() {
+      // Translate elements with data-i18n attribute
+      document.querySelectorAll("[data-i18n]").forEach((el) => {
+        const key = el.getAttribute("data-i18n");
+        if (key) {
+          el.innerText = i18next.t(key);
+        }
+      });
+
+      // Translate placeholders
+      document.querySelectorAll("[data-i18n-placeholder]").forEach((el) => {
+        const key = el.getAttribute("data-i18n-placeholder");
+        if (key) {
+          el.placeholder = i18next.t(key);
+        }
+      });
+
+      // Translate select options manually since option elements don't support data-i18n well
+      const categorySelect = document.getElementById("search-category");
+      categorySelect.options[0].text = i18next.t("site.categoryAll");
+      categorySelect.options[1].text = i18next.t("site.categoryElectronics");
+      categorySelect.options[2].text = i18next.t("site.categoryBooks");
+      categorySelect.options[3].text = i18next.t("site.categoryClothing");
+
+      // Translate category cards text
+      const categoryCards = document.querySelectorAll(".category-card span");
+      categoryCards[0].innerText = i18next.t("site.categoryElectronics");
+      categoryCards[1].innerText = i18next.t("site.categoryBooks");
+      categoryCards[2].innerText = i18next.t("site.categoryClothing");
+
+      // Translate "selected category" or search text if already set
+      if (window.currentCategory) {
+        setSelectedCategoryText(window.currentCategory);
+      }
+      if (window.currentSearch) {
+        setSearchResultText(window.currentSearch.query, window.currentSearch.category);
+      }
+    }
+
+    // Load items from API
+    function loadItems() {
+      fetch("http://localhost:8080/api/items")
+        .then((res) => res.json())
+        .then((data) => {
+          // Ensure each item has a quantity property (default to 1 if not provided)
+          allItems = data.map(item => ({
+            ...item,
+            quantity: item.quantity !== undefined ? item.quantity : 1
+          }));
+          displayItems(allItems);
+          window.currentCategory = null;
+          window.currentSearch = null;
+        })
+        .catch((err) => console.error("Error loading items:", err));
+    }
+
+    // Display items in container
+    function displayItems(items) {
+      const container = document.getElementById("items-container");
+      container.innerHTML = "";
+
+      if (items.length === 0) {
+        container.innerHTML = `<p>${i18next.t("site.noItemsFound")}</p>`;
+        return;
+      }
+
+      items.forEach((item) => {
+        const card = document.createElement("div");
+        card.className = "item-card";
+
+        // Image
+        const img = document.createElement("img");
+        img.src = item.imageUrl;
+        img.alt = item.title;
+        img.style.cursor = "pointer";
+        img.addEventListener("click", () => viewDetails(item.id));
+
+        // Details
+        const details = document.createElement("div");
+        details.className = "item-details";
+        details.style.cursor = "pointer";
+        details.addEventListener("click", () => viewDetails(item.id));
+
+        // Title
+        const title = document.createElement("h3");
+        title.textContent = item.title;
+
+        // Price
+        const price = document.createElement("p");
+        price.className = "item-price";
+        price.textContent = `Price: NPR ${item.price}`;
+
+        // Buy button
+        const buyBtn = document.createElement("button");
+        buyBtn.textContent = i18next.t("site.buyNow");
+        buyBtn.disabled = item.quantity <= 0;
+buyBtn.addEventListener('click', (event) => {
+  event.stopPropagation();
+  openBuyPanel(item);
+});
+
+        // Stock status
+        const stockStatus = document.createElement("p");
+        stockStatus.className = "stock-status";
+        stockStatus.textContent = item.quantity > 0 
+          ? `${item.quantity} ${i18next.t("site.inStock")}`
+          : i18next.t("site.outOfStock");
+        stockStatus.style.color = item.quantity > 0 ? '#4CAF50' : '#F44336';
+
+        details.appendChild(title);
+        details.appendChild(price);
+        details.appendChild(buyBtn);
+        details.appendChild(stockStatus);
+
+        card.appendChild(img);
+        card.appendChild(details);
+
+        container.appendChild(card);
+      });
+    }
+
+    // View item details
+    function viewDetails(itemId) {
+      window.location.href = `description.html?id=${itemId}`;
+    }
+
+    // Filter items by category
+    function filterByCategory(element, category) {
+      window.currentCategory = category;
+      window.currentSearch = null;
+
+      setSelectedCategoryText(category);
+
+      // Highlight active category card
+      document.querySelectorAll(".category-card").forEach((card) => {
+        card.classList.remove("active");
+      });
+      element.classList.add("active");
+
+      const filtered = allItems.filter(
+        (item) => item.category.toLowerCase() === category.toLowerCase()
+      );
+      displayItems(filtered);
+    }
+
+    function setSelectedCategoryText(category) {
+      const text = i18next.t("site.selectedCategory", { category: category });
+      document.getElementById("selected-category").innerText = text;
+    }
+
+    // Search function
+    function handleSearch() {
+      const query = document.getElementById("search-input").value.toLowerCase();
+      const selectedCategory = document.getElementById("search-category").value;
+
+      window.currentSearch = { query: query, category: selectedCategory };
+      window.currentCategory = null;
+
+      setSearchResultText(query, selectedCategory);
+
+      const filtered = allItems.filter((item) => {
+        const matchesCategory =
+          selectedCategory === "All" ||
+          item.category.toLowerCase() === selectedCategory.toLowerCase();
+        const matchesText = item.title.toLowerCase().includes(query);
+        return matchesCategory && matchesText;
+      });
+
+      // Remove active highlight from category cards on search
+      document.querySelectorAll(".category-card").forEach((card) => {
+        card.classList.remove("active");
+      });
+
+      displayItems(filtered);
+    }
+
+    function setSearchResultText(query, category) {
+      const text = i18next.t("site.searchResults", {
+        query: query,
+        category: category
+      });
+      document.getElementById("selected-category").innerText = text;
+    }
+
+    // Buy item API call
+    async function buyItem(id, title, price, quantity) {
+      if (quantity <= 0) {
+        alert(i18next.t("site.outOfStock"));
+        return;
+      }
+
+      try {
+         const user_mode=localStorage.getItem('mode');
+            const email_buyer=localStorage.getItem('user_data');
+           const user_login_by_name=localStorage.getItem('user_login_by');
+           if(user_login_by_name&&user_mode==='user'){
+        const response = await fetch("http://localhost:8080/api/items/initiate-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ id, title, price ,email_buyer})
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to initiate payment.");
+        }
+
+        const data = await response.json();
+
+        if (data.payment_url) {
+          window.location.href = data.payment_url;
+        } else {
+          alert("Payment URL not received from server.");
+        }
+      }
+       else{
+          window.location.href='login1.html';
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Error initiating payment. Please try again.");
+      }
+    }
+
+    // Language selector change handler
+    document.getElementById("languageSelect").addEventListener("change", (e) => {
+  const selectedLang = e.target.value;
+  localStorage.setItem("selectedLanguage", selectedLang); // Save language
+
+  i18next.changeLanguage(selectedLang, () => {
+    updateContent();
+
+    // Redisplay items to update buy button text
+    if (window.currentCategory) {
+      const filtered = allItems.filter(
+        (item) => item.category.toLowerCase() === window.currentCategory.toLowerCase()
+      );
+      displayItems(filtered);
+      setSelectedCategoryText(window.currentCategory);
+    } else if (window.currentSearch) {
+      const filtered = allItems.filter((item) => {
+        const matchesCategory =
+          window.currentSearch.category === "All" ||
+          item.category.toLowerCase() === window.currentSearch.category.toLowerCase();
+        const matchesText = item.title.toLowerCase().includes(window.currentSearch.query);
+        return matchesCategory && matchesText;
+      });
+      displayItems(filtered);
+      setSearchResultText(window.currentSearch.query, window.currentSearch.category);
+    } else {
+      displayItems(allItems);
+      document.getElementById("selected-category").innerText = i18next.t("site.allItems");
+    }
+  });
+});
+
+document.getElementById('historyBtn').addEventListener('click', async () => {
+  const userEmail = localStorage.getItem('user_data'); // Assuming this stores the logged-in user email
+  if (!userEmail) {
+    alert('Please log in to view your history.');
+    return;
+  }
+
+  try {
+    const response = await fetch(`http://localhost:8080/api/items/history/${encodeURIComponent(userEmail)}`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+
+    if (!response.ok) throw new Error('Failed to fetch history.');
+
+    const history = await response.json();
+
+    const container = document.getElementById('historyContainer');
+    const list = document.getElementById('historyList');
+    list.innerHTML = ''; // clear previous
+
+    if (history.length === 0) {
+      list.innerHTML = '<p>No purchase or selling history found.</p>';
+    } else {
+   history.forEach(record => {
+  const div = document.createElement('div');
+  div.id = `history-${record.paymentId}`; // use unique paymentId as id
+  div.className = "history-item";
+  div.style.display = "flex";
+  div.style.gap = "15px";
+  div.style.marginBottom = "15px";
+  div.style.borderBottom = "1px solid #ddd";
+  div.style.paddingBottom = "10px";
+  
+  div.innerHTML = `
+    <img src="${record.imageUrl}" alt="${record.title}" style="width:120px; height:auto; border-radius:8px; flex-shrink:0;" />
+    <div class="details" style="font-size:14px; color:#333;">
+      <strong>${record.title}</strong> (${record.category})<br>
+      <b>Price:</b> NPR ${record.price} <br>
+      <b>Buyer:</b> ${record.buyerEmail} <br>
+      <b>Seller:</b> ${record.sellerEmail} <br>
+      <b>Payment Date:</b> ${record.paymentDate ? new Date(record.paymentDate).toLocaleString() : 'N/A'}
+    </div>
+  `;
+  list.appendChild(div);
+});
+
+
+    }
+
+    container.style.display = 'block';
+  } catch (err) {
+    console.error(err);
+    alert('Error loading history. Please try again later.');
+  }
+});
+
+document.getElementById('closeHistoryBtn').addEventListener('click', () => {
+  document.getElementById('historyContainer').style.display = 'none';
+});
+// Close history container when clicking outside
+document.addEventListener('click', function(event) {
+  const historyContainer = document.getElementById('historyContainer');
+  const historyBtn = document.getElementById('historyBtn');
+  if (!historyContainer || !historyBtn) return;
+
+  // Check if click is inside history container or history button
+  const clickedInsideHistory = historyContainer.contains(event.target);
+  const clickedOnHistoryBtn = historyBtn.contains(event.target);
+
+  if (!clickedInsideHistory && !clickedOnHistoryBtn) {
+    // Clicked outside, so hide the history container
+    historyContainer.style.display = 'none';
+  }
+});
+let currentBuyItem = null;
+
+// Open the panel with item info
+function openBuyPanel(item) {
+  currentBuyItem = item;
+  document.getElementById('buyPanel').style.display = 'flex';
+  document.getElementById('deliveryForm').reset();
+
+  const preview = document.getElementById('buyItemPreview');
+  preview.innerHTML = `
+    <img src="${item.imageUrl}" alt="${item.title}" style="width:100%; height:200px; object-fit:cover; border-radius:8px;">
+    <h3>${item.title}</h3>
+    <p><strong>Price:</strong> NPR ${item.price}</p>
+    <p><strong>Stock:</strong> ${item.quantity > 0 ? item.quantity : 'Out of stock'}</p>
+  `;
+}
+
+// Close and reset the panel
+function closeBuyPanel() {
+  document.getElementById('buyPanel').style.display = 'none';
+  currentBuyItem = null;
+  document.getElementById('deliveryForm').reset();
+}
+
+// Buy button click handler (validates form, saves data, and proceeds to payment)
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('finalBuyBtn').addEventListener('click', () => {
+    const name = document.getElementById('deliveryName').value.trim();
+    const email = document.getElementById('deliveryEmail').value.trim();
+    const phone = document.getElementById('deliveryPhone').value.trim();
+    const address = document.getElementById('deliveryAddress').value.trim();
+const { id, title, price, quantity } = currentBuyItem;
+    if (!name || !email || !validatePhone(phone) || !address||!validateEmail(email)) {
+        if (!validateEmail(email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+     else if (!validatePhone(phone)) {
+      alert("Please enter a valid Phone number.");
+      return;
+    }
+    else{
+
+      alert("Please fill in all delivery details.");
+      return;}
+    }
+
+   const Secondhand_accountholder=localStorage.getItem("user_data");
+
+    if (!currentBuyItem) return;
+
+    // Save to localStorage
+    localStorage.setItem('deliveryInfo', JSON.stringify({ name, email, phone, address }));
+    fetch("http://localhost:8080/api12/orders", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    name: name,
+    email: email,
+    phone: phone,
+    address: address,
+    itemId:id, 
+    itemTitle:title,
+    itemPrice:price,
+    itemQuantity:quantity,
+    secondhandAccountholder:Secondhand_accountholder
+
+
+  })
+})
+.then(res => res.text())
+.then(msg => console.log(msg))
+.catch(err => console.error(err));
+
+
+ 
+    closeBuyPanel();
+    buyItem(id, title, price, quantity);
+  });
+});
+function validatePhone(phone) {
+  // Remove spaces and dashes
+  const cleaned = phone.replace(/[\s-]/g, '');
+
+  // Nepali phone numbers are usually 10 digits and start with 9
+  const phoneRegex = /^9\d{9}$/;
+
+  return phoneRegex.test(cleaned);
+}
+
+// Optional: Email format validation
+function validateEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+}
+
+
+
+  </script>
+   
+<!-- Buy Panel -->
+<div id="buyPanel"
+  style="display: none; position: fixed; top: 80px; left: calc(50% - 350px); width: 700px; background: white; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.3); z-index: 10000; overflow: hidden;">
+
+  <!-- Top Header -->
+  <div id="buyPanelHeader"
+    style="cursor: move; padding: 12px 20px; background: #ffca28; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+    <h3 style="margin: 0;">Delivery Info</h3>
+    
+  </div>
+
+  <!-- Main Content Below Header -->
+  <div style="display: flex; padding: 20px; gap: 20px;">
+    <!-- Left: Item Preview -->
+    <div id="buyItemPreview" style="flex: 1;">
+      <!-- JS will insert preview content here -->
+    </div>
+
+    <!-- Right: Delivery Form -->
+    <div style="flex: 1;">
+      <form id="deliveryForm" style="margin-bottom:15px;">
+        <div style="margin-bottom:12px;">
+          <label>Name:</label>
+          <input type="text" id="deliveryName" required style="width:100%; padding:6px;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label>Email:</label>
+          <input type="email" id="deliveryEmail" required style="width:100%; padding:6px;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label>Phone:</label>
+          <input type="tel" id="deliveryPhone" required style="width:100%; padding:6px;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label>Full Address:</label>
+          <textarea id="deliveryAddress" required style="width:100%; padding:6px; min-height:80px;"></textarea>
+        </div>
+      </form>
+
+      <div style="display:flex;">
+        <button id="finalBuyBtn"
+          style="background-color:#ff6f00; color:white; border:none; padding:8px 16px; border-radius:4px; cursor:pointer; font-size:14px;">
+          Buy
+        </button>
+        <button onclick="closeBuyPanel()"
+          style="background-color:#ccc; padding:8px 16px; border-radius:4px; margin-left:10px; border:none; cursor:pointer; font-size:14px;">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function dragElement12(elmnt, handle) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+  handle.onmousedown = dragMouseDown;
+
+  function dragMouseDown(e) {
+    if (e.target.tagName === "BUTTON") return; // don't drag if clicking button
+    e.preventDefault();
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e.preventDefault();
+
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    let newTop = elmnt.offsetTop - pos2;
+    let newLeft = elmnt.offsetLeft - pos1;
+
+    const maxLeft = window.innerWidth - elmnt.offsetWidth;
+    const maxTop = window.innerHeight - elmnt.offsetHeight;
+
+    if (newLeft < 0) newLeft = 0;
+    if (newTop < 0) newTop = 0;
+    if (newLeft > maxLeft) newLeft = maxLeft;
+    if (newTop > maxTop) newTop = maxTop;
+
+    elmnt.style.top = newTop + "px";
+    elmnt.style.left = newLeft + "px";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+
+// Enable drag on header
+dragElement12(document.getElementById("buyPanel"), document.getElementById("buyPanelHeader"));
+
+function closeBuyPanel() {
+  document.getElementById("buyPanel").style.display = "none";
+}
+</script>
+
+</body>
+</html>

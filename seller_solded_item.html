@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Your Sold Items - Orders Received</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+   
+    h1 {
+      text-align: center;
+      color: black;
+      margin-bottom: 30px;
+    }
+
+    #message {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: #555;
+    }
+
+    #order-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 20px;
+    }
+
+    .order-card {
+      background-color: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease;
+    }
+
+    .order-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .image-section img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-bottom: 1px solid #eee;
+    }
+
+    .info-section {
+      padding: 16px;
+    }
+
+    .info-section h2 {
+      font-size: 20px;
+      margin: 0 0 10px 0;
+      color: #333;
+    }
+
+    .info-section p {
+      margin: 6px 0;
+      color: #555;
+    }
+
+    .panel {
+      margin-top: 15px;
+      padding-top: 10px;
+      border-top: 1px dashed #ccc;
+    }
+
+    .panel label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 6px;
+      color: #222;
+    }
+
+    select {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 100%;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    button {
+      background-color: black;
+      color: yellow;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #222;
+    }
+
+    .message {
+      font-size: 14px;
+      margin-top: 8px;
+    }
+  </style>
+  <link rel="stylesheet" href="header-footer.css">
+</head>
+<body>
+
+
+
+<div class="top-header" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background-color: black; color: white;">
+
+  <!-- Logo -->
+  <a href="sellerhome.html" style="text-decoration: none; color: yellow; font-weight: bold; font-size: 24px; cursor: pointer;">
+    <div class="logo" data-i18n="site.logo">SecondHand</div>
+  </a>
+
+  <!-- Search Bar + Language -->
+  <div style="display: flex; align-items: center; gap: 15px;">
+   
+  </div>
+
+<div class="right-section" style="display: flex; flex-direction: column; align-items: flex-end; gap: 12px; position: relative;">
+ <div> <button id="messageBtn" title="Messages"
+    style="font-size: 18px; background-color: black; color: yellow; border: 2px solid yellow; border-radius: 50%; width: 36px; height: 36px; cursor: pointer;">💬</button>
+ 
+ 
+    <button onclick="toggleSettingsMenu()" title="Settings"
+    style="font-size: 18px; background-color: black; color: yellow; border: 2px solid yellow; border-radius: 50%; width: 36px; height: 36px; cursor: pointer;">⚙️</button>
+
+  <div id="settingsMenu" style="display: none; position: absolute; top: 100%; right: 0; background: white; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000;">
+       <a href="#" onclick="redirectNoBack('login1.html')" data-i18n="site.signIn" style="display: block; padding: 8px 12px; text-decoration: none; color: black;">Sign in</a>
+   <a href="#" onclick="redirectNoBack('sellerlogin.html')"
+    style="display: block; padding: 8px 12px; text-decoration: none; color: black;">Login as seller</a>
+    <button onclick="logout()" style="display: block; width: 100%; text-align: left; padding: 8px 12px; border: none; background: none; color: black; cursor: pointer;">Log out</button>
+  </div></div>
+  <div id="welcomeMessage" style="color: yellow; font-size: 14px;">Welcome, User</div>
+
+ 
+</div>
+
+
+</div>
+
+
+
+
+<!-- NAVIGATION BAR -->
+<div class="nav-bar" style="background-color: rgb(223, 243, 110); padding: 10px 0;">
+  <div class="nav-links" style="display: flex; justify-content: left; gap: 30px; padding: 10px;">
+    <a href="sellerhome.html" data-i18n="site.sellerhome" style="text-decoration: none; color: black; font-weight: bold;">Listed Items</a>
+    <a href="seller_solded_item.html" data-i18n="site.Itemsold" style="text-decoration: none; color: black; font-weight: bold;">Item sold</a>
+    <a href="sellersupport.html" data-i18n="site.support" style="text-decoration: none; color: black; font-weight: bold;">Support</a>
+    <a href="after_login.html" style="text-decoration: none; color: black; font-weight: bold;">Sell here</a>
+  </div>
+</div>
+
+
+
+<!-- CHATBOX -->
+<div id="messageBox"
+  style="display: none; position: fixed; top: 80px; right: 20px; width: 350px; height: 500px; background: white; border: 2px solid yellow; box-shadow: 0 0 12px rgba(0,0,0,0.3); border-radius: 10px; z-index: 999; overflow: hidden; cursor: move;"
+  onmousedown="dragElement(this)">
+
+  <div style="display: flex; justify-content: space-between; align-items: center; background-color: yellow; padding: 6px 10px; border-bottom: 1px solid #ccc;">
+    <h4 id="chatname" style="color: black; margin: 0;">Your Messages</h4>
+    <div>
+     
+      <button title="Close" onclick="document.getElementById('messageBox').style.display='none'" style="background: none; border: none; font-weight: bold; cursor: pointer;">❌</button>
+    </div>
+  </div>
+
+ <div id="messagesArea" style="
+  height: 440px;
+  overflow-y: auto;
+  padding: 16px;
+  background: #f9fafb;
+  border: 1.5px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+  color: #333;
+  scrollbar-width: thin;
+  scrollbar-color: #007bff #e1e4ea;
+">
+  <!-- Messages will appear here -->
+</div>
+
+</div>
+<script src="chat_ko_lagi.js"></script>
+
+<script>
+window.addEventListener("DOMContentLoaded", () => {
+  const welcomeDiv = document.getElementById("welcomeMessage");
+
+  const loginMode = localStorage.getItem("mode"); // 'seller' or 'user'
+  const loginByName = localStorage.getItem("user_data"); // person name or email
+  const isLoggedIn = localStorage.getItem("user_login_by") !== null;
+
+  if (isLoggedIn && loginMode && loginByName) {
+    const modeLabel = loginMode === "seller" ? "Sell" : "Buy";
+    welcomeDiv.textContent = `Welcome to ${modeLabel}, ${loginByName}`;
+  } else {
+    welcomeDiv.textContent = "";
+  }
+});
+ function redirectNoBack(url) {
+    window.location.replace(url); // replaces current page in history
+  }
+function dragElement(elmnt) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+  const header = document.getElementById("messageHeader");
+  if (header) {
+    header.onmousedown = dragMouseDown;
+  } else {
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+
+    // If clicked element is input, textarea, or contenteditable, do NOT drag
+    const target = e.target;
+    if (
+      target.tagName === "INPUT" || 
+      target.tagName === "TEXTAREA" || 
+      target.isContentEditable
+    ) {
+      return; // allow normal typing/focus
+    }
+
+    e.preventDefault();
+
+    // Get the initial mouse cursor position
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+
+    // Calculate new cursor position
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    // Set the element's new position
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+
+
+</script>
+
+
+
+  
+</div>
+
+<script>
+  function dragElement(elmnt, handle) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+    handle.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault();
+
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+
+      document.onmouseup = closeDragElement;
+      document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+
+      // Calculate new position within viewport bounds (optional)
+      let newTop = elmnt.offsetTop - pos2;
+      let newLeft = elmnt.offsetLeft - pos1;
+
+      // Optional: keep inside window boundaries
+      const minLeft = 0;
+      const minTop = 0;
+      const maxLeft = window.innerWidth - elmnt.offsetWidth;
+      const maxTop = window.innerHeight - elmnt.offsetHeight;
+
+      if (newLeft < minLeft) newLeft = minLeft;
+      if (newTop < minTop) newTop = minTop;
+      if (newLeft > maxLeft) newLeft = maxLeft;
+      if (newTop > maxTop) newTop = maxTop;
+
+      elmnt.style.top = newTop + "px";
+      elmnt.style.left = newLeft + "px";
+    }
+
+    function closeDragElement() {
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+
+  const historyContainer = document.getElementById("historyContainer");
+  const historyHeader = document.getElementById("historyHeader");
+
+  dragElement(historyContainer, historyHeader);
+
+  // Close button hides the container
+  document.getElementById("closeHistoryBtn").onclick = () => {
+    historyContainer.style.display = "none";
+  };
+  function dragElement(elmnt) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+  const header = document.getElementById("messageHeader");
+  if (header) {
+    header.onmousedown = dragMouseDown;
+  } else {
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+
+    // If clicked element is input, textarea, or contenteditable, do NOT drag
+    const target = e.target;
+    if (
+      target.tagName === "INPUT" || 
+      target.tagName === "TEXTAREA" || 
+      target.isContentEditable
+    ) {
+      return; // allow normal typing/focus
+    }
+
+    e.preventDefault();
+
+    // Get the initial mouse cursor position
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+
+    // Calculate new cursor position
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    // Set the element's new position
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+  function toggleSettingsMenu() {
+    const menu = document.getElementById("settingsMenu");
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+  }
+
+  // Optional: Hide the menu when clicking outside
+  document.addEventListener("click", function (event) {
+    const menu = document.getElementById("settingsMenu");
+    const button = event.target.closest("button[title='Settings']");
+    if (!menu.contains(event.target) && !button) {
+      menu.style.display = "none";
+    }
+  });
+
+  // Dummy logout function
+  function logout() {
+    localStorage.clear(); // or localStorage.removeItem("user_data");
+    alert("Logged out successfully!");
+    window.location.href = "home.html"; // Redirect after logout
+  }
+  function minimizeChat() {
+    document.getElementById('messagesArea').style.display = 'none';
+  }
+
+  function maximizeChat() {
+    document.getElementById('messagesArea').style.display = 'block';
+  }
+</script>
+
+
+  <h1>Your Sold Items - Orders Received</h1>
+
+  <div id="order-container"></div>
+  <div id="message"></div>
+<footer class="footer">
+    <div class="footer-content">
+      <h3 data-i18n="site.footerTitle"></h3>
+      <div class="contact-info">
+        📧 <span data-i18n="site.emailLabel"></span>: <a href="mailto:secondarynp@gmail.com">secondarynp@gmail.com</a><br/>
+        📞 <span data-i18n="site.contactLabel"></span>: <a href="tel:+9779866297346">9866297346</a>
+      </div>
+      <div class="copyright" data-i18n="site.copyright"></div>
+    </div>
+    <a href="admin_login.html">.</a>
+  </footer>
+  <script>
+    const sellerEmail = localStorage.getItem("user_data");
+    const container = document.getElementById("order-container");
+    const message = document.getElementById("message");
+    const backendUrl = 'http://localhost:8080/orders';
+
+    async function fetchOrders(email) {
+      if (!email) {
+        message.textContent = "No seller email found in localStorage.";
+        return;
+      }
+
+      message.textContent = "Loading orders...";
+      container.innerHTML = "";
+
+      try {
+        const response = await fetch(`http://localhost:8080/api/seller/orders?email=${encodeURIComponent(email)}`);
+        if (!response.ok) throw new Error("Failed to fetch orders");
+        const data = await response.json();
+
+        if (data.length === 0) {
+          message.textContent = "No orders found for your items.";
+          return;
+        }
+
+        message.textContent = "";
+
+        data.forEach(order => {
+          const isDelivered = order.shippingStatus === 'DELIVERED';
+          const card = document.createElement("div");
+          card.className = "order-card";
+          card.innerHTML = `
+            <div class="image-section">
+              <img src="${order.itemImageUrl || 'https://via.placeholder.com/300x200?text=No+Image'}" alt="Item Image" />
+            </div>
+            <div class="info-section">
+              <h2>${order.itemTitle}</h2>
+              <p><strong>Price:</strong> Rs. ${order.itemPrice}</p>
+              <p><strong>Description:</strong> ${order.itemDescription}</p>
+              <p><strong>Buyer:</strong> ${order.buyerName}</p>
+              <p><strong>Email:</strong> ${order.buyerEmail}</p>
+              <p><strong>Address:</strong> ${order.buyerAddress}</p>
+
+              <div class="panel">
+                <label for="statusSelect-${order.orderId}">Shipping Status</label>
+                <select id="statusSelect-${order.orderId}" ${isDelivered ? 'disabled' : ''}>
+                  <option value="PENDING_SHIPMENT" ${order.shippingStatus === 'PENDING_SHIPMENT' ? 'selected' : ''}>Pending Shipment</option>
+                  <option value="SHIPPED" ${order.shippingStatus === 'SHIPPED' ? 'selected' : ''}>Shipped</option>
+                  <option value="DELIVERED" ${order.shippingStatus === 'DELIVERED' ? 'selected' : ''}>Delivered</option>
+                </select>
+
+                <button id="updateBtn-${order.orderId}" onclick="updateShippingStatus(${order.orderId})" ${isDelivered ? 'disabled' : ''}>Update Status</button>
+                <div id="statusMessage-${order.orderId}" class="message"></div>
+              </div>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        message.textContent = `Error: ${err.message}`;
+      }
+    }
+
+    async function updateShippingStatus(orderId) {
+      const statusSelect = document.getElementById(`statusSelect-${orderId}`);
+      const status = statusSelect.value;
+      const msgEl = document.getElementById(`statusMessage-${orderId}`);
+      const buttonEl = document.getElementById(`updateBtn-${orderId}`);
+
+      msgEl.textContent = '';
+      try {
+        const response = await fetch(`${backendUrl}/${orderId}/shipping-status?status=${status}`, {
+          method: 'PUT'
+        });
+        const text = await response.text();
+
+        if (response.ok) {
+          msgEl.style.color = 'green';
+          msgEl.textContent = text || 'Shipping status updated.';
+
+          if (status === 'DELIVERED') {
+            statusSelect.disabled = true;
+            buttonEl.disabled = true;
+          }
+        } else {
+          msgEl.style.color = 'red';
+          msgEl.textContent = text || 'Failed to update status.';
+        }
+      } catch (err) {
+        msgEl.style.color = 'red';
+        msgEl.textContent = 'Error: ' + err.message;
+      }
+    }
+
+    fetchOrders(sellerEmail);
+  </script>
+</body>
+</html>

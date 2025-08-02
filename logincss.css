@@ -1,0 +1,129 @@
+/* Reset & base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(to right, #e0eafc, #cfdef3);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.main-title {
+  color: #1877f2;
+  font-size: 32px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Login container */
+.login-container {
+  background-color: #ffffff;
+  padding: 40px 30px;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 420px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.login-container:hover {
+  transform: translateY(-4px);
+}
+
+/* Heading */
+.login-container h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 25px;
+  font-size: 30px;
+  letter-spacing: 1px;
+}
+
+/* Input fields */
+.login-container input[type="email"],
+.login-container input[type="password"] {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0;
+  border: 1px solid #dcdde1;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #f9f9f9;
+  transition: border 0.2s;
+}
+
+.login-container input:focus {
+  border-color: #1877f2;
+  outline: none;
+}
+
+/* Button */
+.login-container button {
+  width: 100%;
+  background: #1877f2;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.login-container button:hover {
+  background-color: #155dc1;
+}
+
+/* Links */
+.extra-links {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.extra-links a {
+  color: #1877f2;
+  text-decoration: none;
+}
+
+.extra-links a:hover {
+  text-decoration: underline;
+}
+
+/* Signup */
+.signup-link {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 14px;
+  color: #555;
+}
+
+.signup-link a {
+  color: #1877f2;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .login-container {
+    padding: 30px 20px;
+    border-radius: 10px;
+  }
+
+  .login-container h2 {
+    font-size: 24px;
+  }
+}

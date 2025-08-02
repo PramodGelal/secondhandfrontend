@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Item Panel</title>
+  <style>
+      * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #111;
+      color: #fff;
+      margin: 0;
+      padding-top: 100px; /* space for fixed header */
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #000;
+      border-bottom: 3px solid #ffdd00;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      box-shadow: 0 4px 10px rgba(255, 221, 0, 0.3);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #ffdd00;
+      text-shadow: 1px 1px 3px #000;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #ffdd00;
+      font-weight: 600;
+      margin-left: 25px;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #fff;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+      margin: 0;
+      background-color: #1a1a1a;
+      color: #fff;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #ffc107;
+    }
+
+    .item-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .item-card {
+      border: 1px solid #ffc107;
+      border-radius: 10px;
+      padding: 15px;
+      width: 300px;
+      background-color: #2b2b2b;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      transition: transform 0.2s ease;
+    }
+
+    .item-card:hover {
+      transform: scale(1.03);
+    }
+
+    .item-card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      border: 1px solid #ffc107;
+    }
+
+    .item-card h3 {
+      color: #ffc107;
+      margin: 5px 0;
+    }
+
+    .item-card p {
+      font-size: 14px;
+      color: #e0e0e0;
+    }
+
+    .item-card p strong {
+      color: #ffeb3b;
+    }
+
+    .buttons {
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      gap: 5px;
+    }
+
+    .buttons button {
+      padding: 6px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      flex: 1;
+      transition: background-color 0.2s ease;
+      font-weight: bold;
+    }
+
+    .approve {
+      background-color: #ffc107;
+      color: #000;
+    }
+
+    .approve:hover {
+      background-color: #e0b400;
+    }
+
+    .unapprove {
+      background-color: #ff9800;
+      color: #000;
+    }
+
+    .unapprove:hover {
+      background-color: #e07d00;
+    }
+
+    .delete {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .delete:hover {
+      background-color: #c62828;
+    }
+  </style>
+</head>
+<body>
+  
+  <!-- Header with logo and navigation -->
+  <header>
+    <div class="logo">SecondHand Market</div>
+    <nav>
+           <a href="admin.html">Users</a>
+      <a href="item_admin_control.html">Items</a>
+      <a href="notification_admin.html">Notice</a>
+      <a href="orderdetail_admin.html">Orders</a>
+      <a href="payment_his_admin.html">Payment</a>
+      <a href="report_response_admin.html">Report Handler</a>
+      <a href="admin_login.html">Logout</a>
+    </nav>
+  </header>
+  <br><br><br>
+
+  <h1>🛠 Admin Panel - Item Approval</h1>
+
+  <h2>🚫 Unapproved Items</h2>
+  <div id="unapproved-items" class="item-container"></div>
+
+  <h2>✅ Approved Items</h2>
+  <div id="approved-items" class="item-container"></div>
+
+  <script>
+    async function fetchItems() {
+      try {
+        const res = await fetch('http://localhost:8080/api/items/adminlaidata');
+        if (!res.ok) throw new Error('Failed to fetch items');
+        const items = await res.json();
+        displayItems(items);
+      } catch (error) {
+        console.error('Error fetching items:', error);
+      }
+    }
+
+    function displayItems(items) {
+      const approvedDiv = document.getElementById('approved-items');
+      const unapprovedDiv = document.getElementById('unapproved-items');
+      approvedDiv.innerHTML = '';
+      unapprovedDiv.innerHTML = '';
+
+      items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'item-card';
+        card.innerHTML = `
+          <img src="${item.imageUrl}" alt="${item.title}" />
+          <h3>${item.title}</h3>
+          <p>${item.description}</p>
+          <p><strong>Category:</strong> ${item.category}</p>
+          <p><strong>Price:</strong> Rs ${item.price}</p>
+          <div class="buttons">
+            <button class="approve">Approve</button>
+            <button class="unapprove">Unapprove</button>
+            <button class="delete">Delete</button>
+          </div>
+        `;
+
+        card.querySelector('.approve').onclick = () => updateApproval(item.id, true);
+        card.querySelector('.unapprove').onclick = () => updateApproval(item.id, false);
+        card.querySelector('.delete').onclick = () => deleteItem(item.id);
+
+        if (item.adminapporal) {
+          approvedDiv.appendChild(card);
+        } else {
+          unapprovedDiv.appendChild(card);
+        }
+      });
+    }
+
+    async function updateApproval(id, approved) {
+      try {
+        const res = await fetch(`http://localhost:8080/api/items/approval/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ approved })
+        });
+        if (!res.ok) throw new Error('Failed to update approval');
+        fetchItems();
+      } catch (error) {
+        console.error('Error updating approval:', error);
+      }
+    }
+
+    async function deleteItem(id) {
+      if (confirm('Are you sure you want to delete this item?')) {
+        try {
+          const res = await fetch(`http://localhost:8080/api/items/${id}`, {
+            method: 'DELETE'
+          });
+          if (!res.ok) throw new Error('Failed to delete item');
+          fetchItems();
+        } catch (error) {
+          console.error('Error deleting item:', error);
+        }
+      }
+    }
+
+    fetchItems();
+  </script>
+
+</body>
+</html>

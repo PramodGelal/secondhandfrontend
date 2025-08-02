@@ -1,0 +1,88 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  line-height: 1.6;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+.container {
+  width: 90%;
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px 0;
+}
+
+header {
+  background-color: #0d1b2a;
+  color: white;
+  padding: 60px 0;
+  text-align: center;
+}
+
+section {
+  padding: 40px 0;
+}
+
+h2 {
+  margin-bottom: 20px;
+  color: #0d1b2a;
+}
+
+ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+.project {
+  background: white;
+  padding: 15px;
+  margin: 10px 0;
+  border-left: 5px solid #0077b6;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+footer {
+  background-color: #0d1b2a;
+  color: white;
+  text-align: center;
+  padding: 20px 0;
+}
+/* ... keep previous CSS ... */
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  text-align: center;
+}
+
+.profile-pic {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+.skill-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.skill-grid span {
+  background-color: #0077b6;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: 600;
+}

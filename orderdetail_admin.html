@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel - Orders</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #111;
+      color: #fff;
+      margin: 0;
+      padding-top: 100px;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #000;
+      border-bottom: 3px solid #ffdd00;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      box-shadow: 0 4px 10px rgba(255, 221, 0, 0.3);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #ffdd00;
+      text-shadow: 1px 1px 3px #000;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #ffdd00;
+      font-weight: 600;
+      margin-left: 25px;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover { color: #fff; }
+
+    h2 {
+      text-align: center;
+      color: #ffdd00;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 3px #000;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto 50px;
+      padding: 0 20px;
+    }
+
+    .search-container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #searchInput, select, button {
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-right: 10px;
+    }
+
+    #searchInput {
+      width: 250px;
+      border: 2px solid #ffdd00;
+      background-color: #111;
+      color: #ffdd00;
+      box-shadow: 0 0 10px #ffdd00;
+    }
+
+    #searchInput::placeholder { color: #ffdd00cc; }
+
+    #searchInput:focus, select:focus {
+      background-color: #ffdd00;
+      color: #111;
+      outline: none;
+    }
+
+    select {
+      border: 2px solid #ffdd00;
+      background-color: #111;
+      color: #ffdd00;
+      box-shadow: 0 0 10px #ffdd00;
+      cursor: pointer;
+    }
+
+    button {
+      border: none;
+      color: #111;
+      background-color: #ffdd00;
+      min-width: 90px;
+      transition: all 0.3s ease;
+    }
+
+    button:hover { filter: brightness(110%); }
+
+    .table-wrapper { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: linear-gradient(145deg, #222, #111);
+      box-shadow: 0 8px 15px rgba(255, 221, 0, 0.3);
+      border-radius: 15px;
+      overflow: hidden;
+      min-width: 1100px;
+    }
+
+    thead {
+      background-color: #ffdd00;
+      color: #111;
+      font-weight: 700;
+      text-align: left;
+    }
+
+    th, td {
+      padding: 12px 15px;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1.5px solid #444;
+      transition: background-color 0.3s ease;
+    }
+
+    tbody tr:hover { background-color: #333300cc; }
+
+    tbody td {
+      color: #ffdd00cc;
+    }
+
+    .status-select {
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      background-color: #111;
+      color: #ffdd00;
+      border: 1px solid #ffdd00;
+    }
+
+    .status-select option {
+      background-color: #111;
+      color: #ffdd00;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">SecondHand Market</div>
+  <nav>
+       <a href="admin.html">Users</a>
+      <a href="item_admin_control.html">Items</a>
+      <a href="notification_admin.html">Notice</a>
+      <a href="orderdetail_admin.html">Orders</a>
+      <a href="payment_his_admin.html">Payment</a>
+      <a href="report_response_admin.html">Report Handler</a>
+      <a href="admin_login.html">Logout</a>
+  </nav>
+</header>
+
+<div class="container">
+  <h2>Admin Panel - Orders</h2>
+
+  <div class="search-container">
+    <select id="searchField">
+      <option value="">Select Field</option>
+      <option value="secondhandAccountholder">Seller</option>
+      <option value="name">Buyer</option>
+      <option value="email">Email</option>
+      <option value="itemTitle">Item</option>
+      <option value="shippingStatus">Shipping Status</option>
+    </select>
+    <input type="text" id="searchInput" placeholder="Search...">
+    <button onclick="resetFilters()">Reset</button>
+  </div>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Seller</th>
+          <th>Buyer</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Address</th>
+          <th>Item ID</th>
+          <th>Title</th>
+          <th>Price</th>
+          <th>Qty</th>
+          <th>Order Date</th>
+          <th>Shipping Status</th>
+        </tr>
+      </thead>
+      <tbody id="orderTableBody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  const backendUrl = "http://localhost:8080/orders";
+  let orders = [];
+
+  async function fetchOrders() {
+    const res = await fetch("http://localhost:8080/admin/orders");
+    orders = await res.json();
+    renderTable(orders);
+  }
+
+  function renderTable(data) {
+    const tbody = document.getElementById("orderTableBody");
+    tbody.innerHTML = "";
+
+    data.forEach(order => {
+      const tr = document.createElement("tr");
+      const formattedDate = new Date(order.orderDate).toLocaleDateString();
+
+      tr.innerHTML = `
+        <td>${order.id}</td>
+        <td>${order.secondhandAccountholder}</td>
+        <td>${order.name}</td>
+        <td>${order.email}</td>
+        <td>${order.phone}</td>
+        <td>${order.address}</td>
+        <td>${order.itemId}</td>
+        <td>${order.itemTitle}</td>
+        <td>Rs. ${order.itemPrice.toFixed(2)}</td>
+        <td>${order.itemQuantity}</td>
+        <td>${formattedDate}</td>
+        <td>
+          <select class="status-select" onchange="updateStatus(${order.id}, this.value)">
+            <option value="PENDING_SHIPMENT" ${order.shippingStatus === 'PENDING_SHIPMENT' ? 'selected' : ''}>PENDING</option>
+            <option value="SHIPPED" ${order.shippingStatus === 'SHIPPED' ? 'selected' : ''}>SHIPPED</option>
+            <option value="DELIVERED" ${order.shippingStatus === 'DELIVERED' ? 'selected' : ''}>DELIVERED</option>
+          </select>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  async function updateStatus(orderId, status) {
+    try {
+      const res = await fetch(`${backendUrl}/${orderId}/shipping-status?status=${status}`, {
+        method: "PUT",
+      });
+      if (res.ok) {
+        alert("Status updated.");
+        fetchOrders();
+      } else {
+        const msg = await res.text();
+        alert("Failed: " + msg);
+      }
+    } catch (err) {
+      console.error("Error updating status", err);
+    }
+  }
+
+  function resetFilters() {
+    document.getElementById("searchField").value = "";
+    document.getElementById("searchInput").value = "";
+    renderTable(orders);
+  }
+
+  document.getElementById("searchInput").addEventListener("input", () => {
+    const field = document.getElementById("searchField").value;
+    const value = document.getElementById("searchInput").value.toLowerCase();
+    if (!field) return;
+
+    const filtered = orders.filter(order =>
+      order[field] && order[field].toString().toLowerCase().includes(value)
+    );
+
+    renderTable(filtered);
+  });
+
+  fetchOrders();
+</script>
+
+</body>
+</html>

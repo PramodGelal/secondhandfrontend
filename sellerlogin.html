@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+      <style>
+    * {
+      box-sizing: border-box;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #f8f9fa, #e3f2fd);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .sell-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
+    .login-container {
+      background-color: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+
+    form input {
+      width: 100%;
+      padding: 12px 15px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s ease;
+    }
+
+    form input:focus {
+      border-color: #1976d2;
+      outline: none;
+    }
+
+    button[type="submit"] {
+      width: 100%;
+      padding: 12px;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-top: 10px;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #125ea4;
+    }
+
+    .extra-links,
+    .signup-link {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 14px;
+    }
+
+    .extra-links a,
+    .signup-link a {
+      color: #1976d2;
+      text-decoration: none;
+    }
+
+    .extra-links a:hover,
+    .signup-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+     <script>
+  // Clear the browser history entry
+  history.pushState(null, "", location.href);
+  window.onpopstate = function () {
+    history.pushState(null, "", location.href);
+  };
+</script>
+    
+  <!-- Login Section -->
+  <section class="sell-section">
+    <div class="login-container">
+      <h2>Login As Seller</h2>
+      <form id="login_form">
+        <input type="email" name="email" placeholder="Email address" required data-i18n-placeholder="login.emailPlaceholder" />
+        <input type="password" name="password" placeholder="Password" required data-i18n-placeholder="login.passwordPlaceholder" />
+        <button type="submit">Log In</button>
+      </form>
+
+      <div class="extra-links">
+        <a href="forget_password_seller.html">Forgot Password?</a>
+      </div>
+
+      <div class="signup-link">
+        Don't have an account? <a href="signup_seller.html">Create one</a>
+      </div>
+    </div>
+  </section>
+
+     <script>
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user_login_by");
+      localStorage.removeItem("mode");
+      localStorage.removeItem("user_data");
+    }
+
+    document.getElementById("login_form").addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const email = document.querySelector('[name="email"]').value;
+      const password = document.querySelector('[name="password"]').value;
+
+      fetch("http://localhost:8080/api/loginSeller", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        credentials: "include",
+        body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+      })
+      .then(response => response.text())
+      .then(data => {
+  const result = data.trim().toLowerCase();
+
+  if (result.includes("success")) {
+    logout();
+    localStorage.setItem("user_login_by", true);
+    localStorage.setItem("mode", "seller");
+    localStorage.setItem("user_data", email);
+    window.location.href = "sellerhome.html";
+  } else if (result === "banned") {
+    alert("Your seller account has been banned. Please contact support.");
+  } else {
+    alert(i18next.t("login.invalidCredentials") || "Invalid email or password.... Login your Seller Account");
+  }
+})
+
+      .catch(err => {
+        console.error(err);
+        alert(i18next.t("login.loginFailed") || "Login failed.");
+      });
+    });</script>
+</body>
+</html>

@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Second-Hand Market</title>
+  <link rel="stylesheet" href="header-footer.css">
+  <link rel="stylesheet" href="navigation_bar.css">
+  <link rel="stylesheet" href="items.css">
+  <link rel="icon" href="favicon-96x96.png" type="image/png" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .content-wrapper {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+      flex-wrap: wrap;
+    }
+
+    /* === Left: Image + Title + Price + Buy === */
+    .left-section {
+      flex: 1;
+      max-width: 300px;
+    }
+
+    .left-section img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .left-section h1 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+
+    .left-section p {
+      font-size: 16px;
+      margin: 5px 0;
+    }
+
+    #button_buy {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+      transition: background-color 0.3s;
+    }
+
+    #button_buy:hover:not(:disabled) {
+      background-color: #0056b3;
+    }
+
+    #button_buy:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+
+    .stock-status {
+      font-size: 14px;
+      margin-top: 5px;
+      font-weight: bold;
+    }
+
+    .in-stock {
+      color: #28a745;
+    }
+
+    .out-of-stock {
+      color: #dc3545;
+    }
+
+    /* === Middle: Description === */
+    .middle-section {
+      flex: 2;
+      max-width: 600px;
+    }
+
+    .middle-section h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    #description p {
+      margin: 8px 0;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    /* === Right: Ads === */
+    .ad-sidebar {
+      flex: 1;
+      min-width: 200px;
+      background-color: #f9f9f9;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .ad-sidebar h3 {
+      font-size: 18px;
+      border-bottom: 1px solid #ddd;
+      padding-bottom: 5px;
+      margin-bottom: 10px;
+    }
+
+    .ad-box {
+      text-align: center;
+    }
+
+    .ad-box img {
+      max-width: 100%;
+      border-radius: 4px;
+    }
+
+    .ad-box p {
+      font-size: 14px;
+      color: #333;
+      margin-top: 10px;
+    }
+
+    /* Language selector */
+    .language-selector {
+      position: absolute;
+      top: 15px;
+      right: 150px;
+    }
+
+    @media (max-width: 768px) {
+      .content-wrapper {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .left-section,
+      .middle-section,
+      .ad-sidebar {
+        max-width: 100%;
+      }
+    }
+    
+    /* Chat styles */
+    .chat-container {
+      padding: 10px;
+    }
+
+    .chat-back-btn {
+      background-color: #009688;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 10px;
+    }
+
+    .chat-header {
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .message-box {
+      display: none;
+      margin-top: 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      padding: 10px;
+      max-height: 300px;
+      overflow-y: auto;
+      background: #f9f9f9;
+    }
+
+    .messages-area {
+      min-height: 200px;
+    }
+
+    .chat-input-container {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .send-btn {
+      padding: 8px 15px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .message {
+      margin-bottom: 10px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+
+    .message.sent {
+      background-color: #DCF8C6;
+      margin-left: auto;
+    }
+
+    .message.received {
+      background-color: #ECECEC;
+      margin-right: auto;
+    }
+
+    .message-system {
+      background-color: #e0e0e0;
+      font-style: italic;
+      text-align: center;
+      margin: 10px auto;
+    }
+
+    .seller-preview {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      background-color: #f0f0f0;
+      cursor: pointer;
+    }
+
+    .seller-preview:hover {
+      background-color: #e0e0e0;
+    }
+       /* Chat Styles */
+.chat-container {
+  padding: 10px;
+}
+
+.chat-back-btn {
+  background-color: #009688;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.chat-header {
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.seller-status {
+  font-size: 12px;
+  color: #4CAF50;
+  margin-top: 5px;
+}
+
+.payment-history {
+  margin-bottom: 15px;
+}
+
+.payment-list {
+  max-height: 150px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+.payment-item {
+  padding: 8px;
+  margin-bottom: 8px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+}
+
+.payment-item-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.item-name {
+  font-weight: bold;
+}
+
+.item-price {
+  color: #009688;
+}
+
+.payment-date {
+  font-size: 12px;
+  color: #666;
+}
+
+.chat-messages {
+  height: 250px;
+  overflow-y: auto;
+  padding: 10px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.message {
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  max-width: 80%;
+}
+
+.message.sent {
+  background-color: #DCF8C6;
+  margin-left: auto;
+  border-top-right-radius: 0;
+}
+
+.message.received {
+  background-color: #ECECEC;
+  margin-right: auto;
+  border-top-left-radius: 0;
+}
+
+.message-sender {
+  font-weight: bold;
+  font-size: 12px;
+  margin-bottom: 3px;
+}
+
+.message-content {
+  word-wrap: break-word;
+}
+
+.message-time {
+  font-size: 10px;
+  color: #666;
+  text-align: right;
+  margin-top: 3px;
+}
+
+.message-input-container {
+  display: flex;
+  gap: 5px;
+}
+
+.message-input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.send-button {
+  background-color: #009688;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-spinner {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.error-message {
+  color: #f44336;
+  padding: 10px;
+  text-align: center;
+}
+
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 15px;
+  border-radius: 4px;
+  z-index: 1000;
+}
+
+.notification.error {
+  background-color: #f44336;
+  color: white;
+}
+
+.notification.success {
+  background-color: #4CAF50;
+  color: white;
+}
+  </style>
+</head>
+<body>
+  <div class="top-header" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background-color: black; color: white;">
+
+  <!-- Logo -->
+  <a href="home.html" style="text-decoration: none; color: yellow; font-weight: bold; font-size: 24px; cursor: pointer;">
+    <div class="logo" data-i18n="site.logo">SecondHand</div>
+  </a>
+
+  <!-- Search Bar + Language -->
+  <div style="display: flex; align-items: center; gap: 15px;">
+   <div class="search-bar" style="
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #fff;
+  padding: 4px 10px;
+  border-radius: 10px;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.08);
+  max-width: 700px;
+  width: 100%;
+  height: 30px;
+">
+
+  <!-- Category Filter -->
+  <select id="categoryFilter" aria-label="Category Filter" style="
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    font-size: 13px;
+    height: 28px;
+    cursor: pointer;
+  ">
+    <option value="all" data-i18n="site.categoryAll">All</option>
+    <option value="electronics" data-i18n="site.categoryElectronics">Electronics</option>
+    <option value="books" data-i18n="site.categoryBooks">Books</option>
+    <option value="clothing" data-i18n="site.categoryClothing">Clothing</option>
+  </select>
+
+  <!-- Search Input -->
+  <input type="text" id="searchInput" placeholder="" data-i18n-placeholder="site.searchPlaceholder" aria-label="Search Items" style="
+    flex: 1;
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    font-size: 13px;
+    height: 15px;
+  " />
+
+  <!-- Search Button -->
+  <button id="searchBtn" aria-label="Search Button" style="
+    background-color: #ffcc00;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    height: 30px;
+    transition: background-color 0.2s;
+  " onmouseover="this.style.backgroundColor='#ffdb4d'" onmouseout="this.style.backgroundColor='#ffcc00'">
+    🔍
+  </button>
+</div>
+
+
+    <!-- Language Selector -->
+    <select id="languageSelect" aria-label="Select Language"
+      style="padding: 6px 10px; border-radius: 5px; border: 1px solid #ccc; cursor: pointer;">
+      <option value="en">English</option>
+      <option value="np">नेपाली</option>
+    </select>
+  </div>
+
+<div class="right-section" style="display: flex; flex-direction: column; align-items: flex-end; gap: 12px; position: relative;">
+ <div> <button id="messageBtn" title="Messages"
+    style="font-size: 18px; background-color: black; color: yellow; border: 2px solid yellow; border-radius: 50%; width: 36px; height: 36px; cursor: pointer;">💬</button>
+ 
+ <button id="historyBtn"
+      style="font-size: 18px; background-color: black; color: yellow; border: 2px solid yellow; border-radius: 50%; width: 36px; height: 36px; cursor: pointer;">
+      📜
+    </button>
+    <button onclick="toggleSettingsMenu()" title="Settings"
+    style="font-size: 18px; background-color: black; color: yellow; border: 2px solid yellow; border-radius: 50%; width: 36px; height: 36px; cursor: pointer;">⚙️</button>
+
+  <div id="settingsMenu" style="display: none; position: absolute; top: 100%; right: 0; background: white; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000;">
+       <a href="#" onclick="redirectNoBack('login1.html')" data-i18n="site.signIn" style="display: block; padding: 8px 12px; text-decoration: none; color: black;">Sign in</a>
+   <a href="#" onclick="redirectNoBack('sellerlogin.html')"
+    style="display: block; padding: 8px 12px; text-decoration: none; color: black;">Login as seller</a>
+    <button onclick="logout()" style="display: block; width: 100%; text-align: left; padding: 8px 12px; border: none; background: none; color: black; cursor: pointer;">Log out</button>
+  </div></div>
+  <div id="welcomeMessage" style="color: yellow; font-size: 14px;">Welcome, User</div>
+
+ 
+</div>
+
+
+</div>
+
+
+
+
+<!-- NAVIGATION BAR -->
+<div class="nav-bar" style="background-color: rgb(223, 243, 110); padding: 10px 0;">
+  <div class="nav-links" style="display: flex; justify-content: left; gap: 30px; padding: 10px;">
+    <a href="home.html" data-i18n="site.home" style="text-decoration: none; color: black; font-weight: bold;">Home</a>
+    <a href="cat.html" data-i18n="site.categories" style="text-decoration: none; color: black; font-weight: bold;">Categories</a>
+    <a href="sell.html" data-i18n="site.sell" style="text-decoration: none; color: black; font-weight: bold;">Sell</a>
+    <a href="support.html" data-i18n="site.support" style="text-decoration: none; color: black; font-weight: bold;">Support</a>
+  </div>
+</div>
+
+
+
+<!-- CHATBOX -->
+<div id="messageBox"
+  style="display: none; position: fixed; top: 80px; right: 20px; width: 350px; height: 500px; background: white; border: 2px solid yellow; box-shadow: 0 0 12px rgba(0,0,0,0.3); border-radius: 10px; z-index: 999; overflow: hidden; cursor: move;"
+  onmousedown="dragElement(this)">
+
+  <div style="display: flex; justify-content: space-between; align-items: center; background-color: yellow; padding: 6px 10px; border-bottom: 1px solid #ccc;">
+    <h4 id="chatname" style="color: black; margin: 0;">Your Messages</h4>
+    <div>
+     
+      <button title="Close" onclick="document.getElementById('messageBox').style.display='none'" style="background: none; border: none; font-weight: bold; cursor: pointer;">❌</button>
+    </div>
+  </div>
+
+  <div id="messagesArea" style="height: 440px; overflow-y: auto; padding: 10px;">
+    <!-- Messages will appear here -->
+  </div>
+</div>
+<script>
+ function redirectNoBack(url) {
+    window.location.replace(url); // replaces current page in history
+  }
+
+function dragElement(elmnt) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+  const header = document.getElementById("messageHeader");
+  if (header) {
+    header.onmousedown = dragMouseDown;
+  } else {
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+
+    // If clicked element is input, textarea, or contenteditable, do NOT drag
+    const target = e.target;
+    if (
+      target.tagName === "INPUT" || 
+      target.tagName === "TEXTAREA" || 
+      target.isContentEditable
+    ) {
+      return; // allow normal typing/focus
+    }
+
+    e.preventDefault();
+
+    // Get the initial mouse cursor position
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+
+    // Calculate new cursor position
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    // Set the element's new position
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+
+
+</script>
+
+<div id="historyContainer"
+  style="display: none; position: fixed; top: 100px; left: calc(50% - 450px); width: 500px; max-width: 100%; background: white; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.2); border-left: 5px solid yellow; z-index: 1000;">
+
+  <!-- Draggable header with title and close button -->
+  <div id="historyHeader" style="cursor: move; padding: 12px 20px; background: yellow; border-top-left-radius: 12px; border-top-right-radius: 12px; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+    <h2 style="margin: 0; font-weight: bold; color: black;">Purchase & Selling History</h2>
+    <button id="closeHistoryBtn" 
+      style="background: none; border: none; font-size: 20px; font-weight: bold; cursor: pointer; color: black;" 
+      title="Close">✖</button>
+  </div>
+
+  <div id="historyList" style="padding: 20px; max-height: 400px; overflow-y: auto;">
+    <!-- Your purchase & selling history content goes here -->
+  </div>
+  
+</div>
+
+<script>
+  function dragElement(elmnt, handle) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+    handle.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault();
+
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+
+      document.onmouseup = closeDragElement;
+      document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+
+      // Calculate new position within viewport bounds (optional)
+      let newTop = elmnt.offsetTop - pos2;
+      let newLeft = elmnt.offsetLeft - pos1;
+
+      // Optional: keep inside window boundaries
+      const minLeft = 0;
+      const minTop = 0;
+      const maxLeft = window.innerWidth - elmnt.offsetWidth;
+      const maxTop = window.innerHeight - elmnt.offsetHeight;
+
+      if (newLeft < minLeft) newLeft = minLeft;
+      if (newTop < minTop) newTop = minTop;
+      if (newLeft > maxLeft) newLeft = maxLeft;
+      if (newTop > maxTop) newTop = maxTop;
+
+      elmnt.style.top = newTop + "px";
+      elmnt.style.left = newLeft + "px";
+    }
+
+    function closeDragElement() {
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+
+  const historyContainer = document.getElementById("historyContainer");
+  const historyHeader = document.getElementById("historyHeader");
+
+  dragElement(historyContainer, historyHeader);
+
+  // Close button hides the container
+  document.getElementById("closeHistoryBtn").onclick = () => {
+    historyContainer.style.display = "none";
+  };
+  function dragElement(elmnt) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+  const header = document.getElementById("messageHeader");
+  if (header) {
+    header.onmousedown = dragMouseDown;
+  } else {
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+
+    // If clicked element is input, textarea, or contenteditable, do NOT drag
+    const target = e.target;
+    if (
+      target.tagName === "INPUT" || 
+      target.tagName === "TEXTAREA" || 
+      target.isContentEditable
+    ) {
+      return; // allow normal typing/focus
+    }
+
+    e.preventDefault();
+
+    // Get the initial mouse cursor position
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+
+    // Calculate new cursor position
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    // Set the element's new position
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+ function toggleSettingsMenu() {
+    const menu = document.getElementById("settingsMenu");
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+  }
+
+  // Optional: Hide the menu when clicking outside
+  document.addEventListener("click", function (event) {
+    const menu = document.getElementById("settingsMenu");
+    const button = event.target.closest("button[title='Settings']");
+    if (!menu.contains(event.target) && !button) {
+      menu.style.display = "none";
+    }
+  });
+
+  // Dummy logout function
+  function logout() {
+    localStorage.clear(); // or localStorage.removeItem("user_data");
+    alert("Logged out successfully!");
+    window.location.href = "home.html"; // Redirect after logout
+  }
+
+  function minimizeChat() {
+    document.getElementById('messagesArea').style.display = 'none';
+  }
+
+  function maximizeChat() {
+    document.getElementById('messagesArea').style.display = 'block';
+  }
+</script>
+
+
+  <div class="main-content-wrapper">
+ 
+
+
+    <!-- Item Detail Section -->
+  <div id="itemDetailContainer">
+    <!-- JS will inject content here -->
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <h3 data-i18n="site.footerTitle">SecondHand</h3>
+      <div class="contact-info">
+        📧 <span data-i18n="site.emailLabel">Email</span>: <a href="mailto:secondarynp@gmail.com">secondarynp@gmail.com</a><br/>
+        📞 <span data-i18n="site.contactLabel">Contact</span>: <a href="tel:+9779866297346">9866297346</a>
+      </div>
+      <div class="copyright" data-i18n="site.copyright">
+        &copy; 2025 SecondHand Market. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- i18next library -->
+  <script src="https://unpkg.com/i18next@22.4.7/i18next.min.js"></script>
+  <script>
+ 
+
+    // Initialize the application
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeApp();
+    });
+
+    function initializeApp() {
+      // Check if user is logged in
+      checkLoginStatus();
+      
+      // Initialize i18n
+      initI18n().then(() => {
+        loadItemDetails();
+      });
+
+      // Set up event listeners
+      setupEventListeners();
+    }
+
+    function checkLoginStatus() {
+      const userData = localStorage.getItem('user_data');
+      if (userData) {
+        try {
+          const user = JSON.parse(userData);
+          currentUserEmail = user.email || userData;
+        } catch {
+          currentUserEmail = userData;
+        }
+      }
+    }
+
+    function initI18n() {
+      const resources = {
+        en: {
+          translation: {
+            site: {
+              logo: "SecondHand",
+              signIn: "Sign in",
+              searchPlaceholder: "Search items",
+              searchBtn: "🔍",
+              categoryAll: "All",
+              categoryElectronics: "Electronics",
+              categoryBooks: "Books",
+              categoryClothing: "Clothing",
+              home: "☰ Home",
+              categories: "Categories",
+              sell: "Sell",
+              support: "Support",
+              footerTitle: "SecondHand",
+              emailLabel: "Email",
+              contactLabel: "Contact",
+              copyright: "© 2025 SecondHand Market. All rights reserved.",
+              priceLabel: "Price",
+              buyBtn: "Buy Now",
+              description: "Description",
+              sponsored: "Sponsored",
+              inStock: "In Stock",
+              outOfStock: "Out of Stock",
+              errorLoading: "Error loading item details",
+              paymentUrlError: "Payment URL not received from server",
+              paymentError: "Error initiating payment"
+            }
+          }
+        },
+        np: {
+          translation: {
+            site: {
+              logo: "सेकेन्डह्याण्ड",
+              signIn: "लगइन गर्नुहोस्",
+              searchPlaceholder: "सामान खोज्नुहोस्",
+              searchBtn: "🔍",
+              categoryAll: "सबै",
+              categoryElectronics: "इलेक्ट्रोनिक्स",
+              categoryBooks: "किताबहरू",
+              categoryClothing: "लुगाफाटा",
+              home: "☰ गृहपृष्ठ",
+              categories: "श्रेणीहरू",
+              sell: "बेच्नुहोस्",
+              support: "सहयोग",
+              footerTitle: "सेकेन्डह्याण्ड",
+              emailLabel: "इमेल",
+              contactLabel: "सम्पर्क",
+              copyright: "© २०२५ सेकेन्डह्याण्ड बजार। सर्वाधिकार सुरक्षित।",
+              priceLabel: "मूल्य",
+              buyBtn: "अब किन्नुहोस्",
+              description: "विवरण",
+              sponsored: "प्रायोजित",
+              inStock: "स्टकमा उपलब्ध",
+              outOfStock: "स्टक सकियो",
+              errorLoading: "सामान विवरण लोड गर्दा त्रुटि",
+              paymentUrlError: "भुक्तानी URL सर्भरबाट प्राप्त भएन",
+              paymentError: "भुक्तानी सुरु गर्दा त्रुटि"
+            }
+          }
+        }
+      };
+
+      return i18next.init({
+        lng: 'en',
+        debug: false,
+        resources: resources
+      }).then(() => {
+        updateContent();
+      });
+    }
+
+    function updateContent() {
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        el.innerHTML = i18next.t(el.getAttribute('data-i18n'));
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        el.setAttribute('placeholder', i18next.t(el.getAttribute('data-i18n-placeholder')));
+      });
+    }
+
+    function setupEventListeners() {
+      // Language selector
+      document.getElementById('languageSelect').addEventListener('change', (e) => {
+        i18next.changeLanguage(e.target.value).then(() => {
+          updateContent();
+          loadItemDetails();
+        });
+      });
+
+      // History button
+      document.getElementById('historyBtn').addEventListener('click', showHistory);
+      document.getElementById('closeHistoryBtn').addEventListener('click', () => {
+        document.getElementById('historyContainer').style.display = 'none';
+      });
+
+      // Close history when clicking outside
+      document.addEventListener('click', function(event) {
+        const historyContainer = document.getElementById('historyContainer');
+        const historyBtn = document.getElementById('historyBtn');
+        if (historyContainer && historyBtn && 
+            !historyContainer.contains(event.target) && 
+            !historyBtn.contains(event.target)) {
+          historyContainer.style.display = 'none';
+        }
+      });
+    }
+
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user_login_by");
+      localStorage.removeItem("mode");
+      localStorage.removeItem("user_data");
+      window.location.href = 'login1.html';
+    }
+
+    async function loadItemDetails() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const itemId = urlParams.get('id');
+        if (!itemId) {
+          document.getElementById('itemDetailContainer').innerHTML = `<p style="color:red;">${i18next.t('site.errorLoading')}</p>`;
+          return;
+        }
+
+        const response = await fetch(`http://localhost:8080/api/items/${itemId}`);
+        if (!response.ok) throw new Error("Item not found");
+
+        const item = await response.json();
+        item.quantity = item.quantity !== undefined ? item.quantity : 1;
+
+        renderItemDetails(item);
+      } catch (err) {
+        document.getElementById('itemDetailContainer').innerHTML = 
+          `<p style="color:red;">${i18next.t('site.errorLoading') || 'Error loading item details.'}</p>`;
+        console.error(err);
+      }
+    }
+
+    function renderItemDetails(item) {
+      const container = document.getElementById('itemDetailContainer');
+      container.innerHTML = `
+        <div class="content-wrapper">
+          <!-- Left Section -->
+          <div class="left-section">
+            <img src="${item.imageUrl}" alt="${item.title}" />
+            <h1>${item.title}</h1>
+            <p><strong>${i18next.t('site.priceLabel')}:</strong> NPR ${item.price}</p>
+            <button id="button_buy" ${item.quantity <= 0 ? 'disabled' : ''}>
+              ${i18next.t('site.buyBtn')}
+          
+            <div style="color:white" class="stock-status ${item.quantity > 0 ? 'in-stock' : 'out-of-stock'}">
+              ${item.quantity > 0 ? 
+                `${item.quantity} ${i18next.t('site.inStock')}` : 
+                i18next.t('site.outOfStock')}
+            </div>
+          </div>
+
+          <!-- Middle Section -->
+          <div class="middle-section">
+            <h2>${i18next.t('site.description')}</h2>
+            <div id="description">${formatDescription(item.description)}</div>
+          </div>
+
+          <!-- Right Section -->
+          <div class="ad-sidebar">
+            <h3>${i18next.t('site.sponsored')}</h3>
+            <div class="ad-box">
+              <img id="adImage" src="https://upload.wikimedia.org/wikipedia/commons/2/23/Emblem_of_Nepal.svg" alt="Ad" />
+              <p id="adText">Official Emblem of Nepal</p>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Set up buy button
+     // Replace the existing buy button event listener with:
+document.getElementById('button_buy').addEventListener('click', (e) => {
+  e.preventDefault();
+  openBuyPanel(item);
+});
+
+    }
+
+    function formatDescription(text) {
+      return text
+        .split('\n')
+        .map(line => `<p>${line.trim()}</p>`)
+        .join('');
+    }
+
+    async function buyItem(id, title, price, quantity) {
+      if (quantity <= 0) {
+        alert(i18next.t('site.outOfStock'));
+        return;
+      }
+
+      try {
+        const user_mode = localStorage.getItem('mode');
+        const email_buyer = localStorage.getItem('user_data');
+        const user_login_by_name = localStorage.getItem('user_login_by');
+        
+        if (user_login_by_name && user_mode === 'user') {
+          const response = await fetch("http://localhost:8080/api/items/initiate-payment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ id, title, price, email_buyer })
+          });
+
+          if (!response.ok) throw new Error("Payment initiation failed");
+
+          const data = await response.json();
+
+          if (data.payment_url) {
+            window.location.href = data.payment_url;
+          } else {
+            alert(i18next.t('site.paymentUrlError') || "Payment URL not received from server.");
+          }
+        } else {
+          window.location.href = 'login1.html';
+        }
+      } catch (e) {
+        alert(i18next.t('site.paymentError') || "Error initiating payment. Please try again.");
+        console.error(e);
+      }
+    }
+
+let currentBuyItem = null;
+
+// Open the panel with item info
+function openBuyPanel(item) {
+  currentBuyItem = item;
+  document.getElementById('buyPanel').style.display = 'flex';
+  document.getElementById('deliveryForm').reset();
+
+  const preview = document.getElementById('buyItemPreview');
+  preview.innerHTML = `
+    <img src="${item.imageUrl}" alt="${item.title}" style="width:100%; height:200px; object-fit:cover; border-radius:8px;">
+    <h3>${item.title}</h3>
+    <p><strong>Price:</strong> NPR ${item.price}</p>
+    <p><strong>Stock:</strong> ${item.quantity > 0 ? item.quantity : 'Out of stock'}</p>
+  `;
+}
+
+// Close and reset the panel
+function closeBuyPanel() {
+  document.getElementById('buyPanel').style.display = 'none';
+  currentBuyItem = null;
+  document.getElementById('deliveryForm').reset();
+}
+
+// Buy button click handler (validates form, saves data, and proceeds to payment)
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('finalBuyBtn').addEventListener('click', () => {
+    const name = document.getElementById('deliveryName').value.trim();
+    const email = document.getElementById('deliveryEmail').value.trim();
+    const phone = document.getElementById('deliveryPhone').value.trim();
+    const address = document.getElementById('deliveryAddress').value.trim();
+const { id, title, price, quantity } = currentBuyItem;
+    if (!name || !email || !validatePhone(phone) || !address||!validateEmail(email)) {
+        if (!validateEmail(email)) {
+      alert("Please enter a valid email address.");
+      return;
+    }
+     else if (!validatePhone(phone)) {
+      alert("Please enter a valid Phone number.");
+      return;
+    }
+    else{
+
+      alert("Please fill in all delivery details.");
+      return;}
+    }
+
+   const Secondhand_accountholder=localStorage.getItem("user_data");
+
+    if (!currentBuyItem) return;
+
+    // Save to localStorage
+    localStorage.setItem('deliveryInfo', JSON.stringify({ name, email, phone, address }));
+    fetch("http://localhost:8080/api12/orders", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    name: name,
+    email: email,
+    phone: phone,
+    address: address,
+    itemId:id, 
+    itemTitle:title,
+    itemPrice:price,
+    itemQuantity:quantity,
+    secondhandAccountholder:Secondhand_accountholder
+
+
+  })
+})
+.then(res => res.text())
+.then(msg => console.log(msg))
+.catch(err => console.error(err));
+
+
+ 
+    closeBuyPanel();
+    buyItem(id, title, price, quantity);
+  });
+});
+function validatePhone(phone) {
+  // Remove spaces and dashes
+  const cleaned = phone.replace(/[\s-]/g, '');
+
+  // Nepali phone numbers are usually 10 digits and start with 9
+  const phoneRegex = /^9\d{9}$/;
+
+  return phoneRegex.test(cleaned);
+}
+
+// Optional: Email format validation
+function validateEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
+}
+
+    window.addEventListener("DOMContentLoaded", () => {
+  const welcomeDiv = document.getElementById("welcomeMessage");
+
+  const loginMode = localStorage.getItem("mode"); // 'seller' or 'user'
+  const loginByName = localStorage.getItem("user_data"); // person name or email
+  const isLoggedIn = localStorage.getItem("user_login_by") !== null;
+
+  if (isLoggedIn && loginMode && loginByName) {
+    const modeLabel = loginMode === "seller" ? "Sell" : "Buy";
+    welcomeDiv.textContent = `Welcome to ${modeLabel}, ${loginByName}`;
+  } else {
+    welcomeDiv.textContent = "";
+  }
+});
+  </script>
+
+  <script src="chat_ko_lagi.js"></script>
+  
+<!-- Buy Panel -->
+<div id="buyPanel"
+  style="display: none; position: fixed; top: 80px; left: calc(50% - 350px); width: 700px; background: white; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.3); z-index: 10000; overflow: hidden;">
+
+  <!-- Top Header -->
+  <div id="buyPanelHeader"
+    style="cursor: move; padding: 12px 20px; background: #ffca28; display: flex; justify-content: space-between; align-items: center; user-select: none;">
+    <h3 style="margin: 0;">Delivery Info</h3>
+    
+  </div>
+
+  <!-- Main Content Below Header -->
+  <div style="display: flex; padding: 20px; gap: 20px;">
+    <!-- Left: Item Preview -->
+    <div id="buyItemPreview" style="flex: 1;">
+      <!-- JS will insert preview content here -->
+    </div>
+
+    <!-- Right: Delivery Form -->
+    <div style="flex: 1;">
+      <form id="deliveryForm" style="margin-bottom:15px;">
+        <div style="margin-bottom:12px;">
+          <label>Name:</label>
+          <input type="text" id="deliveryName" required style="width:100%; padding:6px;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label>Email:</label>
+          <input type="email" id="deliveryEmail" required style="width:100%; padding:6px;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label>Phone:</label>
+          <input type="tel" id="deliveryPhone" required style="width:100%; padding:6px;">
+        </div>
+        <div style="margin-bottom:12px;">
+          <label>Full Address:</label>
+          <textarea id="deliveryAddress" required style="width:100%; padding:6px; min-height:80px;"></textarea>
+        </div>
+      </form>
+
+      <div style="display:flex;">
+        <button id="finalBuyBtn"
+          style="background-color:#ff6f00; color:white; border:none; padding:8px 16px; border-radius:4px; cursor:pointer; font-size:14px;">
+          Buy
+        </button>
+        <button onclick="closeBuyPanel()"
+          style="background-color:#ccc; padding:8px 16px; border-radius:4px; margin-left:10px; border:none; cursor:pointer; font-size:14px;">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function dragElement12(elmnt, handle) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+  handle.onmousedown = dragMouseDown;
+
+  function dragMouseDown(e) {
+    if (e.target.tagName === "BUTTON") return; // don't drag if clicking button
+    e.preventDefault();
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e.preventDefault();
+
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    let newTop = elmnt.offsetTop - pos2;
+    let newLeft = elmnt.offsetLeft - pos1;
+
+    const maxLeft = window.innerWidth - elmnt.offsetWidth;
+    const maxTop = window.innerHeight - elmnt.offsetHeight;
+
+    if (newLeft < 0) newLeft = 0;
+    if (newTop < 0) newTop = 0;
+    if (newLeft > maxLeft) newLeft = maxLeft;
+    if (newTop > maxTop) newTop = maxTop;
+
+    elmnt.style.top = newTop + "px";
+    elmnt.style.left = newLeft + "px";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+
+// Enable drag on header
+dragElement12(document.getElementById("buyPanel"), document.getElementById("buyPanelHeader"));
+
+function closeBuyPanel() {
+  document.getElementById("buyPanel").style.display = "none";
+}
+</script>
+
+</body>
+</html>

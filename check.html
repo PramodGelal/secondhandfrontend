@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login | SecondHand Market</title>
+  <link rel="stylesheet" href="logincss.css">
+  <link rel="icon" href="favicon-96x96.png" type="image/png" />
+  <script>
+    // Prevent back button navigation
+    history.pushState(null, "", location.href);
+    window.onpopstate = function () {
+      history.pushState(null, "", location.href);
+    };
+  </script>
+</head>
+<body>
+
+  <h1 class="main-title">🛍️ SecondHand Market</h1>
+
+  <div class="login-container">
+    <h2>Login</h2>
+    <form id="login_form">
+      <input type="email" name="email" placeholder="Email address" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <button type="submit">Log In</button>
+    </form>
+
+    <div class="extra-links">
+      <a href="forget_password.html">Forgot Password?</a>
+    </div>
+
+    <div class="signup-link">
+      Don't have an account? <a href="signup1.html">Create one</a>
+    </div>
+  </div>
+
+  <script>
+    function logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user_login_by");
+      localStorage.removeItem("mode");
+      localStorage.removeItem("user_data");
+    }
+
+    document.getElementById("login_form").addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const email = document.querySelector('[name="email"]').value;
+      const password = document.querySelector('[name="password"]').value;
+
+      fetch("https://secondhandnab-production.up.railway.app/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        credentials: "include",
+        body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`
+      })
+      .then(response => response.text())
+      .then(data => {
+        const result = data.trim().toLowerCase();
+
+        if (result === "success") {
+          logout(); // clear previous session
+          localStorage.setItem("user_login_by", true);
+          localStorage.setItem("mode", 'user');
+          localStorage.setItem("user_data", email);
+          window.location.href = "home.html";
+        } else if (result === "banned") {
+          alert("🚫 Your account has been banned. Please contact support.");
+        } else {
+          alert("❌ Invalid email or password.");
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("⚠️ Login failed. Please try again later.");
+      });
+    });
+  </script>
+
+</body>
+</html>

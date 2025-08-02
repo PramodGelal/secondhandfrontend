@@ -1,0 +1,118 @@
+/* Container holding the form */
+.sell-section {
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.sell-form-container {
+  max-width: 700px;
+  margin: 0 auto;
+  background-color: white;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+}
+
+.sell-form-container h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  font-size: 1.8em;
+  color: #333;
+}
+
+/* Form fields */
+form .form-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+form .form-group label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+}
+
+form input[type="text"],
+form input[type="email"],
+form input[type="tel"],
+form input[type="number"],
+form input[type="file"],
+form select,
+form textarea {
+  padding: 10px 12px;
+  border: 1.5px solid #ccc;
+  border-radius: 5px;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+form input[type="text"]:focus,
+form input[type="email"]:focus,
+form input[type="tel"]:focus,
+form input[type="number"]:focus,
+form select:focus,
+form textarea:focus {
+  border-color: #4CAF50;
+}
+
+/* Checkbox */
+form .checkbox {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+}
+
+form .checkbox input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+/* Submit Button */
+form button[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s;
+}
+
+form button[type="submit"]:hover {
+  background-color: #43a047;
+}
+
+/* Error and Success Styling */
+.input-error {
+  border-color: red !important;
+}
+
+.input-success {
+  border-color: green !important;
+}
+
+.error {
+  color: red;
+  font-size: 0.85em;
+  margin-top: 4px;
+  display: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .sell-form-container {
+    padding: 25px 20px;
+  }
+
+  form input,
+  form select,
+  form textarea {
+    font-size: 14px;
+  }
+}

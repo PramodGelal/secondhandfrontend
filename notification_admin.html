@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel - View Users</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #111;
+      color: #fff;
+      margin: 0;
+      padding-top: 100px; /* space for fixed header */
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #000;
+      border-bottom: 3px solid #ffdd00;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      box-shadow: 0 4px 10px rgba(255, 221, 0, 0.3);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #ffdd00;
+      text-shadow: 1px 1px 3px #000;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #ffdd00;
+      font-weight: 600;
+      margin-left: 25px;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #fff;
+    }
+
+    h2 {
+      text-align: center;
+      color: #ffdd00;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      text-shadow: 1px 1px 3px #000;
+    }
+
+    /* Notification panel */
+    .notification-panel {
+      max-width: 900px;
+      margin: 0 auto 50px;
+      border: 3px solid #ffdd00;
+      border-radius: 15px;
+      background: linear-gradient(145deg, #222, #111);
+      padding: 20px 30px;
+      box-shadow: 0 8px 15px rgba(255, 221, 0, 0.3);
+    }
+
+    .notification-panel h3 {
+      color: #ffdd00;
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #ffdd00;
+      padding-bottom: 5px;
+    }
+
+    .notification-panel input[type="text"],
+    .notification-panel textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 12px;
+      border-radius: 6px;
+      border: 1.5px solid #ffdd00;
+      background-color: #111;
+      color: #ffdd00;
+      font-weight: 600;
+      font-size: 1rem;
+      resize: vertical;
+    }
+
+    .notification-panel input[type="text"]::placeholder,
+    .notification-panel textarea::placeholder {
+      color: #ffdd00aa;
+    }
+
+    .notification-panel button {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      color: #111;
+      background-color: #ffdd00;
+      transition: all 0.3s ease;
+    }
+
+    .notification-panel button:hover {
+      filter: brightness(110%);
+    }
+
+    /* User groups and cards styles */
+    .mode-group {
+      margin: 0 auto 50px;
+      border: 3px solid #ffdd00;
+      border-radius: 15px;
+      background: linear-gradient(145deg, #222, #111);
+      padding: 30px 40px;
+      max-width: 900px;
+      box-shadow: 0 8px 15px rgba(255, 221, 0, 0.3);
+    }
+
+    .mode-group h3 {
+      color: #ffdd00;
+      font-size: 1.8rem;
+      border-bottom: 2px solid #ffdd00;
+      margin-bottom: 20px;
+    }
+
+    .user-card {
+      border: 1.5px solid #444;
+      border-radius: 12px;
+      background-color: #1a1a1a;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+    }
+
+    .user-card p {
+      margin: 6px 0;
+    }
+
+    .user-card strong {
+      color: #ffdd00;
+    }
+
+    input[type="date"] {
+      padding: 8px;
+      margin-top: 10px;
+      margin-right: 15px;
+      border-radius: 6px;
+      border: 1.5px solid #ffdd00;
+      background-color: #111;
+      color: #ffdd00;
+      font-weight: 600;
+    }
+
+    input[type="date"]:focus {
+      background-color: #ffdd00;
+      color: #111;
+    }
+
+    button {
+      padding: 10px 18px;
+      margin: 10px 10px 0 0;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      color: #111;
+      background-color: #ffdd00;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      filter: brightness(110%);
+    }
+
+    button:nth-of-type(2) {
+      background-color: #333;
+      color: #ffdd00;
+      border: 2px solid #ffdd00;
+    }
+
+    button:nth-of-type(2):hover {
+      background-color: #ffdd00;
+      color: #111;
+    }
+
+    ul {
+      color: #ccc;
+      padding-left: 20px;
+    }
+
+    @media (max-width: 700px) {
+      nav a {
+        margin-left: 15px;
+        font-size: 1rem;
+      }
+
+      .mode-group,
+      .notification-panel {
+        padding: 20px;
+      }
+
+      input[type="date"],
+      button,
+      .notification-panel input[type="text"],
+      .notification-panel textarea {
+        width: 100%;
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header with logo and navigation -->
+  <header>
+    <div class="logo">SecondHand Market</div>
+    <nav>
+            <a href="admin.html">Users</a>
+      <a href="item_admin_control.html">Items</a>
+      <a href="notification_admin.html">Notice</a>
+      <a href="orderdetail_admin.html">Orders</a>
+      <a href="payment_his_admin.html">Payment</a>
+      <a href="report_response_admin.html">Report Handler</a>
+      <a href="admin_login.html">Logout</a>
+     
+    </nav>
+  </header>
+
+  <h2>Admin Panel - All Users</h2>
+
+  <!-- Notification Panel -->
+  <div class="notification-panel">
+    <h3>Send Notification Email to All Users</h3>
+    <input id="notifySubject" type="text" placeholder="Subject" />
+    <textarea id="notifyMessage" rows="4" placeholder="Message"></textarea>
+    <button onclick="sendNotification()">Send Notification</button>
+  </div>
+
+  <div id="userContainer"></div>
+
+  <script>
+
+    async function sendNotification() {
+      const subject = document.getElementById("notifySubject").value.trim();
+      const message = document.getElementById("notifyMessage").value.trim();
+
+      if (!subject || !message) {
+        alert("Please fill in both subject and message.");
+        return;
+      }
+
+      try {
+        const res = await fetch("http://localhost:8080/admin/notify-all", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ subject, message }),
+        });
+
+        const result = await res.text();
+        alert(result);
+        document.getElementById("notifySubject").value = "";
+        document.getElementById("notifyMessage").value = "";
+      } catch (error) {
+        console.error("Error sending notification:", error);
+        alert("Failed to send notification.");
+      }
+    }
+
+    window.onload = fetchUsers;
+  </script>
+</body>
+</html>

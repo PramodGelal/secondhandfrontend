@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Report Response Panel</title>
+  <style>
+    body {
+      background: #111;
+      color: #f1c40f;
+      font-family: Arial, sans-serif;
+      padding: 0;
+      margin: 0;
+    }
+
+    header {
+      background-color: #222;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid #f1c40f;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #f1c40f;
+    }
+
+    nav a {
+      color: #f1c40f;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 30px 0 20px;
+    }
+
+    .report-box {
+      background: #222;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 20px;
+      box-shadow: 0 0 10px rgba(241, 196, 15, 0.3);
+    }
+
+    .report-box p {
+      margin: 6px 0;
+    }
+
+    textarea {
+      width: 100%;
+      background-color: #000;
+      color: #f1c40f;
+      padding: 10px;
+      border: 1px solid #f1c40f;
+      border-radius: 6px;
+      margin-top: 8px;
+      resize: vertical;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 8px 14px;
+      background-color: #f1c40f;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .response {
+      margin-top: 10px;
+      font-style: italic;
+    }
+
+    .success {
+      color: lightgreen;
+    }
+
+    .error {
+      color: tomato;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">SecondHand Market</div>
+    <nav>
+      <a href="admin.html">Users</a>
+      <a href="item_admin_control.html">Items</a>
+      <a href="notification_admin.html">Notice</a>
+      <a href="orderdetail_admin.html">Orders</a>
+      <a href="payment_his_admin.html">Payment</a>
+      <a href="report_response_admin.html">Report Handler</a>
+      <a href="admin_login.html">Logout</a>
+    </nav>
+  </header>
+
+  <h1>Admin Report Response</h1>
+  <div id="reportContainer">Loading reports...</div>
+
+  <script>
+    async function loadReports() {
+      const container = document.getElementById("reportContainer");
+      container.innerHTML = "Loading...";
+
+      try {
+        const res = await fetch("http://localhost:8080/orders/reports");
+        const data = await res.json();
+
+        const filteredReports = data.filter(r => r.reportMessage !== null);
+
+        if (filteredReports.length === 0) {
+          container.innerHTML = "<p>No active reports found.</p>";
+          return;
+        }
+
+        container.innerHTML = "";
+
+        filteredReports.forEach(report => {
+          const reportDiv = document.createElement("div");
+          reportDiv.className = "report-box";
+
+          reportDiv.innerHTML = `
+            <p><strong>Order ID:</strong> ${report.order.id}</p>
+            <p><strong>Report:</strong> ${report.reportMessage}</p>
+            <p><strong>Reported At:</strong> ${new Date(report.reportedAt).toLocaleString()}</p>
+            <p><strong>Admin Response:</strong> <span id="responseText-${report.id}">${report.adminResponse || "<i>Not responded yet</i>"}</span></p>
+            <textarea id="input-${report.id}" rows="3" placeholder="Write your response...">${report.adminResponse || ""}</textarea>
+            <button onclick="submitResponse(${report.id})">Submit</button>
+            <div class="response" id="status-${report.id}"></div>
+          `;
+
+          container.appendChild(reportDiv);
+        });
+
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = "<p class='error'>Failed to load reports.</p>";
+      }
+    }
+
+    async function submitResponse(reportId) {
+      const input = document.getElementById(`input-${reportId}`);
+      const status = document.getElementById(`status-${reportId}`);
+      const responseText = document.getElementById(`responseText-${reportId}`);
+
+      const message = input.value.trim();
+      if (!message) {
+        alert("Response cannot be empty!");
+        return;
+      }
+
+      try {
+        const res = await fetch(`http://localhost:8080/orders/report/${reportId}/response`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(message)
+        });
+
+        if (res.ok) {
+          status.textContent = "✅ Response submitted!";
+          status.className = "response success";
+          responseText.textContent = message;
+        } else {
+          status.textContent = "❌ Failed to submit.";
+          status.className = "response error";
+        }
+      } catch (err) {
+        console.error(err);
+        status.textContent = "❌ Error occurred.";
+        status.className = "response error";
+      }
+    }
+
+    loadReports();
+  </script>
+
+</body>
+</html>

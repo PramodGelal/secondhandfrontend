@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="icon" href="favicon-96x96.png" type="image/png" />
+    <title>Khalti Payment</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+        
+        h1 {
+            color: #5C2D91;
+            font-size: 22px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .payment-methods {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+        
+        .method {
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            padding: 10px 15px;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+        }
+        
+        .method.active {
+            background-color: #5C2D91;
+            color: white;
+        }
+        
+        .khalti-logo {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .khalti-logo img {
+            height: 40px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .pay-button {
+            background-color: #5C2D91;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 15px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .forgot-pin {
+            text-align: center;
+            margin: 15px 0;
+            color: #5C2D91;
+            font-size: 14px;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .set-pin {
+            text-align: center;
+            color: #5C2D91;
+            font-size: 14px;
+            text-decoration: none;
+            display: block;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Choose your payment method</h1>
+        
+        <div class="payment-methods">
+            <div class="method active">KHALTI</div>
+            <div class="method">E-BANKING</div>
+            <div class="method">MOBILE BANKING</div>
+        </div>
+        
+        <div class="khalti-logo">
+            <!-- Replace with actual Khalti logo if available -->
+            <div style="font-size: 24px; font-weight: bold; color: #5C2D91;">khalti</div>
+        </div>
+        
+        <div class="input-group">
+            <label for="mobile">Khalti Mobile Number</label>
+            <input type="text" id="mobile" placeholder="98XXXXXXXX">
+        </div>
+        
+        <div class="input-group">
+            <label for="pin">Khalti PIN</label>
+            <input type="password" id="pin" placeholder="••••">
+        </div>
+        
+        <button class="pay-button" id="payButton">PAY RS 11</button>
+        
+        <a href="#" class="forgot-pin">Forgot your Khalti PIN?</a>
+        <a href="#" class="set-pin">SET KHALTI PIN</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Method selection
+            const methods = document.querySelectorAll('.method');
+            methods.forEach(method => {
+                method.addEventListener('click', function() {
+                    methods.forEach(m => m.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Payment button click
+            const payButton = document.getElementById('payButton');
+            payButton.addEventListener('click', function() {
+                const mobile = document.getElementById('mobile').value;
+                const pin = document.getElementById('pin').value;
+                
+                if (!mobile || !pin) {
+                    alert('Please enter your mobile number and PIN');
+                    return;
+                }
+                
+                // Here you would typically process the payment
+                alert(`Payment of Rs 11 initiated for mobile number ${mobile}`);
+                
+                // In a real implementation, you would call Khalti's API here
+                // and handle the response accordingly
+            });
+        });
+    </script>
+</body>
+</html>

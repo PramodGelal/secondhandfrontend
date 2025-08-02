@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Second-Hand Market</title>
+  <link rel="icon" href="favicon-96x96.png" type="image/png" />
+  <link rel="stylesheet" href="header-footer.css">
+  <link rel="stylesheet" href="navigation_bar.css">
+  <link rel="stylesheet" href="items.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f8f9fa;
+    }
+
+    /* Button hover effect for all buttons */
+    button {
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    button:hover {
+      background-color: #00796b !important; /* dark teal hover */
+      transform: scale(1.05);
+    }
+
+    .main-content-wrapper {
+      display: flex;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 10px;
+      gap: 10px;
+    }
+
+    .ad-box-vertical {
+      width: 150px;
+      background-color: #ebf0ed;
+      border: 1px solid #e1ddd5;
+      margin-top: 20px;
+      padding: 5px;
+      border-radius: 10px;
+      height: 520px; /* fixed height for ad */
+      box-shadow: 0 0 8px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .ad-box-vertical img {
+      width: 100%;
+      height: 500px;
+      border-radius: 10px;
+      object-fit: cover;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    #itemContainerGrouped {
+      flex: 1;
+      margin: 20px 0 30px 0;
+    }
+
+    .category-block {
+      margin-bottom: 30px;
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+    }
+
+    .category-block h2 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .item-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .item-card {
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: 220px;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+    }
+
+    .item-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    }
+
+    .item-card img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+    }
+
+    .item-details {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .item-details h3 {
+      font-size: 16px;
+      margin: 0;
+      color: #333;
+    }
+
+    .price-buy-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .item-price {
+      font-weight: bold;
+      color: #009688;
+      font-size: 14px;
+    }
+
+    .item-details button {
+      background-color: #ff6f00;
+      color: white;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .item-details button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .stock-status {
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .category-controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .category-controls button {
+      background-color: #009688;
+      color: white;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .category-controls button:hover {
+      background-color: #00796b;
+      transform: scale(1.05);
+    }
+
+    footer.footer {
+      margin-top: 30px;
+      background-color: #333;
+      color: #eee;
+      padding: 15px 0;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-header">
+     <a href="home.html" style="text-decoration: none; color: inherit; cursor: pointer;">
+      <div class="logo" data-i18n="site.logo">SecondHand</div>
+    </a>
+    <div class="search-bar">
+      <select id="categoryFilter" aria-label="Category Filter">
+        <option value="all" data-i18n="site.categoryAll">All</option>
+        <option value="electronics" data-i18n="site.categoryElectronics">Electronics</option>
+        <option value="books" data-i18n="site.categoryBooks">Books</option>
+        <option value="clothing" data-i18n="site.categoryClothing">Clothing</option>
+      </select>
+      <input type="text" id="searchInput" placeholder="" data-i18n-placeholder="site.searchPlaceholder" aria-label="Search Items"/>
+      <button id="searchBtn" aria-label="Search Button">🔍</button>
+    </div>
+
+    
+
+    <div class="right-section">
+      <div class="language-selector" style="margin-left:10px;">
+      <select id="languageSelect" aria-label="Select Language" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #ccc; cursor: pointer;">
+        <option value="en">English</option>
+        <option value="np">नेपाली</option>
+      </select>
+    </div>
+  <div class="profile-dropdown">
+    <button class="profile-btn" id="profileBtn">
+      <img src="default-profile.jpg" alt="Profile" id="profileImg" class="profile-img">
+      <span id="username">User</span>
+    </button>
+    <div class="dropdown-content" id="dropdownContent">
+      <div class="dropdown-header">
+        <img src="default-profile.jpg" alt="Profile" class="profile-img-large">
+        <div>
+          <h4 id="dropdownUsername">User</h4>
+          <a href="#" data-i18n="site.viewProfile">View Profile</a>
+        </div>
+      </div>
+      <div class="dropdown-divider"></div>
+      <a href="#" data-i18n="site.accountSettings">Account Settings</a>
+      <a href="#" data-i18n="site.helpSupport">Help & Support</a>
+      <div class="dropdown-divider"></div>
+      <a href="#" onclick="logout()" data-i18n="site.logout">Log Out</a>
+    </div>
+  </div>
+  <button style="background-color: #f0c14b; color: #111;">
+    <a id="anker" href="login1.html" data-i18n="site.signIn" style="color: #111; text-decoration: none;">Sign in</a>
+  </button>
+</div>
+  </div>
+
+  <div class="nav-bar">
+    <div class="nav-links">
+      <a href="home.html" data-i18n="site.home"></a>
+      <a href="cat.html" data-i18n="site.categories"></a>
+      <a href="sell.html" data-i18n="site.sell"></a>
+      <a href="support.html" data-i18n="site.support"></a>
+    </div>
+  </div>
+
+  <div class="main-content-wrapper">
+    <!-- Left Ad with dynamic image -->
+    <div class="ad-box-vertical" id="leftAdBox">
+      <img src="" alt="Left Ad" id="leftAdImg" />
+    </div>
+
+    <!-- Main Items -->
+    <div id="itemContainerGrouped"></div>
+
+    <!-- Right Ad with dynamic image -->
+    <div class="ad-box-vertical" id="rightAdBox">
+      <img src="" alt="Right Ad" id="rightAdImg" />
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <h3 data-i18n="site.footerTitle"></h3>
+      <div class="contact-info">
+        📧 <span data-i18n="site.emailLabel"></span>: <a href="mailto:secondarynp@gmail.com">secondarynp@gmail.com</a><br/>
+        📞 <span data-i18n="site.contactLabel"></span>: <a href="tel:+9779866297346">9866297346</a>
+      </div>
+      <div class="copyright" data-i18n="site.copyright"></div>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/i18next@22.4.7/i18next.min.js"></script>
+
+  <script>
+    // Profile dropdown functionality
+document.addEventListener('DOMContentLoaded', function() {
+  const profileBtn = document.getElementById('profileBtn');
+  const dropdownContent = document.getElementById('dropdownContent');
+  
+  // Check if user is logged in
+  const userData = localStorage.getItem('user_data');
+  if (userData) {
+    try {
+      const user = JSON.parse(userData);
+      document.getElementById('username').textContent = user.name || 'User';
+      document.getElementById('dropdownUsername').textContent = user.name || 'User';
+      if (user.profileImage) {
+        document.getElementById('profileImg').src = user.profileImage;
+        document.querySelector('.profile-img-large').src = user.profileImage;
+      }
+    } catch (e) {
+      console.error('Error parsing user data:', e);
+    }
+  }
+
+  // Toggle dropdown
+  profileBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    dropdownContent.classList.toggle('show');
+  });
+
+  // Close dropdown when clicking outside
+  window.addEventListener('click', function() {
+    if (dropdownContent.classList.contains('show')) {
+      dropdownContent.classList.remove('show');
+    }
+  });
+});
+       function logout() {
+   localStorage.removeItem("token");
+    localStorage.removeItem("user_login_by");
+    localStorage.removeItem("mode");
+    localStorage.removeItem("user_data");
+  }
+    const IMAGE_BASE_URL = "http://localhost:8080/";
+    let allItems = [];
+    const itemsPerPage = 7;
+    const categoryPageIndex = {};
+
+    // Ad Images Arrays
+    const leftAdImages = [
+      'https://upload.wikimedia.org/wikipedia/commons/2/23/Emblem_of_Nepal.svg',
+      'https://www.collegenp.com/uploads/2024/12/nepal-engineering-college-building.jpg',
+      'https://www.changunarayanmun.gov.np/sites/changunarayanmun.gov.np/files/img/slider/364545689_1265447750807285_5487152811967783262_n_0.jpg'
+    ];
+
+    const rightAdImages = [
+      'https://www.changunarayanmun.gov.np/sites/changunarayanmun.gov.np/files/img/slider/364545689_1265447750807285_5487152811967783262_n_0.jpg',
+      'https://upload.wikimedia.org/wikipedia/commons/2/23/Emblem_of_Nepal.svg',
+      'https://www.collegenp.com/uploads/2024/12/nepal-engineering-college-building.jpg'
+    ];
+
+    let leftAdIndex = 0;
+    let rightAdIndex = 0;
+
+    function cycleAds() {
+      const leftImg = document.getElementById('leftAdImg');
+      const rightImg = document.getElementById('rightAdImg');
+
+      leftAdIndex = (leftAdIndex + 1) % leftAdImages.length;
+      rightAdIndex = (rightAdIndex + 1) % rightAdImages.length;
+
+      leftImg.src = leftAdImages[leftAdIndex];
+      rightImg.src = rightAdImages[rightAdIndex];
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('leftAdImg').src = leftAdImages[leftAdIndex];
+      document.getElementById('rightAdImg').src = rightAdImages[rightAdIndex];
+      setInterval(cycleAds, 4000);
+    });
+
+    async function buyItem(id, title, price, quantity) {
+      
+      if (quantity <= 0) {
+        alert(i18next.t('site.outOfStock'));
+        return;
+      }
+
+      try {
+                   const user_mode=localStorage.getItem('mode');
+            const email_buyer=localStorage.getItem('user_data');
+           const user_login_by_name=localStorage.getItem('user_login_by');
+           if(user_login_by_name&&user_mode==='user'){
+        const response = await fetch("http://localhost:8080/api/items/initiate-payment", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ id, title, price ,email_buyer})
+        });
+
+        if (!response.ok) throw new Error("Failed to initiate payment.");
+        const data = await response.json();
+        localStorage.setItem("khaltiPidx", data.pidx);
+
+        if (data.payment_url) {
+          window.location.href = data.payment_url;
+        } else {
+          alert("Payment URL not received from server.");
+        }}
+        else{
+         alert("You have not logged in as a user. Not allowed to buy in seller mode. Redirecting to login...");
+setTimeout(() => {
+  window.location.href = 'login1.html';
+}, 0.0); // 2000 ms = 2 seconds
+
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Error initiating payment. Please try again.");
+      }
+    }
+
+    function viewDetails(itemId) {
+      window.location.href = `description.html?id=${itemId}`;
+    }
+
+    function groupItemsByCategory(items) {
+      const grouped = {};
+      items.forEach(item => {
+        const cat = item.category.toLowerCase();
+        if (!grouped[cat]) grouped[cat] = [];
+        grouped[cat].push(item);
+      });
+      return grouped;
+    }
+
+    function renderCategorySection(items, category, page = 0, showAll = false) {
+      if (!categoryPageIndex[category]) categoryPageIndex[category] = 0;
+
+      if (showAll) {
+        categoryPageIndex[category] = 0;
+        const row = document.getElementById(`row-${category}`);
+        row.innerHTML = '';
+
+        items.forEach(item => {
+          const card = document.createElement('div');
+          card.className = 'item-card';
+
+          const img = document.createElement('img');
+          img.src = item.imageUrl;
+          img.alt = item.title;
+          img.addEventListener('click', () => viewDetails(item.id));
+
+          const details = document.createElement('div');
+          details.className = 'item-details';
+          details.addEventListener('click', () => viewDetails(item.id));
+
+          const title = document.createElement('h3');
+          title.textContent = item.title;
+
+          const priceBuyRow = document.createElement('div');
+          priceBuyRow.className = 'price-buy-row';
+
+          const price = document.createElement('p');
+          price.className = 'item-price';
+          price.textContent = `NPR ${item.price}`;
+
+          const buyBtn = document.createElement('button');
+          buyBtn.textContent = i18next.t('site.buyNow');
+          buyBtn.disabled = item.quantity <= 0;
+          buyBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            buyItem(item.id, item.title, item.price, item.quantity);
+          });
+
+          // Add stock status
+          const stockStatus = document.createElement('p');
+          stockStatus.className = 'stock-status';
+          stockStatus.textContent = item.quantity > 0 
+            ? `${item.quantity} ${i18next.t('site.inStock')}`
+            : i18next.t('site.outOfStock');
+          stockStatus.style.color = item.quantity > 0 ? '#4CAF50' : '#F44336';
+
+          priceBuyRow.appendChild(price);
+          priceBuyRow.appendChild(buyBtn);
+          details.appendChild(title);
+          details.appendChild(priceBuyRow);
+          details.appendChild(stockStatus);
+          card.appendChild(img);
+          card.appendChild(details);
+          row.appendChild(card);
+        });
+
+        return;
+      }
+
+      categoryPageIndex[category] = page % Math.ceil(items.length / itemsPerPage);
+
+      let start = categoryPageIndex[category] * itemsPerPage;
+      let visibleItems = [];
+
+      if (start + itemsPerPage <= items.length) {
+        visibleItems = items.slice(start, start + itemsPerPage);
+      } else {
+        const endPart = items.slice(start);
+        const neededFromStart = itemsPerPage - endPart.length;
+        const startPart = items.slice(0, neededFromStart);
+        visibleItems = endPart.concat(startPart);
+      }
+
+      const row = document.getElementById(`row-${category}`);
+      row.innerHTML = '';
+
+      visibleItems.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'item-card';
+
+        const img = document.createElement('img');
+        img.src = item.imageUrl;
+        img.alt = item.title;
+        img.addEventListener('click', () => viewDetails(item.id));
+
+        const details = document.createElement('div');
+        details.className = 'item-details';
+        details.addEventListener('click', () => viewDetails(item.id));
+
+        const title = document.createElement('h3');
+        title.textContent = item.title;
+
+        const priceBuyRow = document.createElement('div');
+        priceBuyRow.className = 'price-buy-row';
+
+        const price = document.createElement('p');
+        price.className = 'item-price';
+        price.textContent = `NPR ${item.price}`;
+        
+        const buyBtn = document.createElement('button');
+        buyBtn.textContent = i18next.t('site.buyNow');
+        buyBtn.disabled = item.quantity <= 0;
+        buyBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          buyItem(item.id, item.title, item.price, item.quantity);
+        });
+
+        // Add stock status
+        const stockStatus = document.createElement('p');
+        stockStatus.className = 'stock-status';
+        stockStatus.textContent = item.quantity > 0 
+          ? `${item.quantity} ${i18next.t('site.inStock')}`
+          : i18next.t('site.outOfStock');
+        stockStatus.style.color = item.quantity > 0 ? '#4CAF50' : '#F44336';
+
+        priceBuyRow.appendChild(price);
+        priceBuyRow.appendChild(buyBtn);
+        details.appendChild(title);
+        details.appendChild(priceBuyRow);
+        details.appendChild(stockStatus);
+        card.appendChild(img);
+        card.appendChild(details);
+        row.appendChild(card);
+      });
+    }
+
+    function renderAllCategories(groupedItems) {
+      const container = document.getElementById('itemContainerGrouped');
+      container.innerHTML = '';
+
+      Object.keys(groupedItems).forEach(category => {
+        categoryPageIndex[category] = 0;
+
+        const section = document.createElement('div');
+        section.className = 'category-block';
+
+        const title = document.createElement('h2');
+        title.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+        section.appendChild(title);
+
+        const row = document.createElement('div');
+        row.className = 'item-row';
+        row.id = `row-${category}`;
+        section.appendChild(row);
+
+        const controls = document.createElement('div');
+        controls.className = 'category-controls';
+
+        const nextBtn = document.createElement('button');
+        nextBtn.textContent = i18next.t('site.next');
+        nextBtn.onclick = () => {
+          const nextPage = categoryPageIndex[category] + 1;
+          renderCategorySection(groupedItems[category], category, nextPage);
+        };
+
+        const allBtn = document.createElement('button');
+        allBtn.textContent = i18next.t('site.all');
+        allBtn.onclick = () => renderCategorySection(groupedItems[category], category, 0, true);
+
+        controls.appendChild(nextBtn);
+        controls.appendChild(allBtn);
+        section.appendChild(controls);
+
+        container.appendChild(section);
+
+        renderCategorySection(groupedItems[category], category);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Init translations first
+      i18next.init({
+        lng: 'en', // default language
+        debug: false,
+        resources: {
+          en: {
+            translation: {
+              site: {
+                logo: "SecondHand",
+                signIn: "Sign in",
+                searchPlaceholder: "Search items",
+                categoryAll: "All",
+                categoryElectronics: "Electronics",
+                categoryBooks: "Books",
+                categoryClothing: "Clothing",
+                home: "Home",
+                categories: "Categories",
+                sell: "Sell",
+                support: "Support",
+                footerTitle: "SecondHand",
+                emailLabel: "Email",
+                contactLabel: "Contact",
+                copyright: "© 2025 SecondHand Market. All rights reserved.",
+                buyNow: "Buy Now",
+                next: "Next",
+                all: "All",
+                inStock: "in stock",
+                outOfStock: "Out of stock"
+              }
+            }
+          },
+          np: {
+            translation: {
+              site: {
+                logo: "सेकेन्डह्याण्ड",
+                signIn: "लगइन गर्नुहोस्",
+                searchPlaceholder: "सामान खोज्नुहोस्",
+                categoryAll: "सबै",
+                categoryElectronics: "इलेक्ट्रोनिक्स",
+                categoryBooks: "किताबहरू",
+                categoryClothing: "लुगाफाटा",
+                home: "गृहपृष्ठ",
+                categories: "श्रेणीहरू",
+                sell: "बेच्नुहोस्",
+                support: "सहयोग",
+                footerTitle: "सेकेन्डह्याण्ड",
+                emailLabel: "इमेल",
+                contactLabel: "सम्पर्क",
+                copyright: "© २०२५ सेकेन्डह्याण्ड बजार। सर्वाधिकार सुरक्षित।",
+                buyNow: "अहिले किन्नुहोस्",
+                next: "अर्को",
+                all: "सबै",
+                inStock: "स्टकमा उपलब्ध",
+                outOfStock: "स्टक सकियो"
+              }
+            }
+          }
+        }
+      }, function(err, t) {
+        updateContent();
+        loadItems();
+      });
+
+      document.getElementById('languageSelect').addEventListener('change', (e) => {
+        i18next.changeLanguage(e.target.value, () => {
+          updateContent();
+          renderAllCategories(groupItemsByCategory(allItems));
+        });
+      });
+
+      function updateContent() {
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          const key = el.getAttribute('data-i18n');
+          if (key) el.innerText = i18next.t(key);
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+          const key = el.getAttribute('data-i18n-placeholder');
+          if (key) el.placeholder = i18next.t(key);
+        });
+      }
+
+      async function loadItems() {
+        try {
+          const res = await fetch('http://localhost:8080/api/items', {
+            method: 'GET',
+            credentials: 'include'
+          });
+          allItems = await res.json();
+          // Ensure each item has a quantity property (default to 1 if not provided)
+          allItems = allItems.map(item => ({
+            ...item,
+            quantity: item.quantity !== undefined ? item.quantity : 1
+          }));
+          renderAllCategories(groupItemsByCategory(allItems));
+        } catch (err) {
+          console.error('Error loading items:', err);
+          document.getElementById('itemContainerGrouped').innerHTML = '<p style="color:red;">Failed to load items.</p>';
+        }
+      }
+
+      // Search button event listener
+      document.getElementById('searchBtn').addEventListener('click', () => {
+        const searchText = document.getElementById('searchInput').value.toLowerCase();
+        const selectedCategory = document.getElementById('categoryFilter').value.toLowerCase();
+
+        const filteredItems = allItems.filter(item => {
+          const matchesSearch = item.title.toLowerCase().includes(searchText) ||
+                item.description.toLowerCase().includes(searchText);
+          const matchesCategory = selectedCategory === 'all' ||
+                item.category.toLowerCase().trim() === selectedCategory;
+          return matchesSearch && matchesCategory;
+        });
+
+        renderAllCategories(groupItemsByCategory(filteredItems));
+      });
+    });
+  </script>
+</body>
+</html>

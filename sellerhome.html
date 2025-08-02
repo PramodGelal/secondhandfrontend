@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Seller Items</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    
+    .card {
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      border-radius: 12px;
+    }
+    .card img {
+      height: 200px;
+      object-fit: cover;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+    .card-body {
+      position: relative;
+    }
+    .btn-group {
+      margin-top: 10px;
+    }
+    #updatePanel {
+      position: fixed;
+      top: 100px;
+      left: 100px;
+      width: 300px;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      z-index: 9999;
+      display: none;
+      cursor: move;
+    }
+    #updatePanel img {
+      width: 100%;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+  </style>
+  <link rel="stylesheet" href="header-footer.css">
+</head>
+<body>
+
+
+
+<div class="top-header" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background-color: black; color: white;">
+
+  <!-- Logo -->
+  <a href="sellerhome.html" style="text-decoration: none; color: yellow; font-weight: bold; font-size: 24px; cursor: pointer;">
+    <div class="logo" data-i18n="site.logo">SecondHand</div>
+  </a>
+
+  <!-- Search Bar + Language -->
+  <div style="display: flex; align-items: center; gap: 15px;">
+   
+  </div>
+
+<div class="right-section" style="display: flex; flex-direction: column; align-items: flex-end; gap: 12px; position: relative;">
+ <div> <button id="messageBtn" title="Messages"
+    style="font-size: 18px; background-color: black; color: yellow; border: 2px solid yellow; border-radius: 50%; width: 36px; height: 36px; cursor: pointer;">💬</button>
+ 
+ 
+    <button onclick="toggleSettingsMenu()" title="Settings"
+    style="font-size: 18px; background-color: black; color: yellow; border: 2px solid yellow; border-radius: 50%; width: 36px; height: 36px; cursor: pointer;">⚙️</button>
+
+  <div id="settingsMenu" style="display: none; position: absolute; top: 100%; right: 0; background: white; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000;">
+       <a href="#" onclick="redirectNoBack('login1.html')" data-i18n="site.signIn" style="display: block; padding: 8px 12px; text-decoration: none; color: black;">Sign in</a>
+   <a href="#" onclick="redirectNoBack('sellerlogin.html')"
+    style="display: block; padding: 8px 12px; text-decoration: none; color: black;">Login as seller</a>
+    <button onclick="logout()" style="display: block; width: 100%; text-align: left; padding: 8px 12px; border: none; background: none; color: black; cursor: pointer;">Log out</button>
+  </div></div>
+  <div id="welcomeMessage" style="color: yellow; font-size: 14px;">Welcome, User</div>
+
+ 
+</div>
+
+
+</div>
+
+
+
+
+<!-- NAVIGATION BAR -->
+<div class="nav-bar" style="background-color: rgb(223, 243, 110); padding: 10px 0;">
+  <div class="nav-links" style="display: flex; justify-content: left; gap: 30px; padding: 10px;">
+    <a href="sellerhome.html" data-i18n="site.sellerhome" style="text-decoration: none; color: black; font-weight: bold;">Listed Items</a>
+    <a href="seller_solded_item.html" data-i18n="site.Itemsold" style="text-decoration: none; color: black; font-weight: bold;">Item sold</a>
+    <a href="sellersupport.html" data-i18n="site.support" style="text-decoration: none; color: black; font-weight: bold;">Support</a>
+    <a href="after_login.html" style="text-decoration: none; color: black; font-weight: bold;">Sell here</a>
+
+  </div>
+</div>
+
+
+
+<!-- CHATBOX -->
+<div id="messageBox"
+  style="display: none; position: fixed; top: 80px; right: 20px; width: 350px; height: 500px; background: white; border: 2px solid yellow; box-shadow: 0 0 12px rgba(0,0,0,0.3); border-radius: 10px; z-index: 999; overflow: hidden; cursor: move;"
+  onmousedown="dragElement(this)">
+
+  <div style="display: flex; justify-content: space-between; align-items: center; background-color: yellow; padding: 6px 10px; border-bottom: 1px solid #ccc;">
+    <h4 id="chatname" style="color: black; margin: 0;">Your Messages</h4>
+    <div>
+     
+      <button title="Close" onclick="document.getElementById('messageBox').style.display='none'" style="background: none; border: none; font-weight: bold; cursor: pointer;">❌</button>
+    </div>
+  </div>
+
+ <div id="messagesArea" style="
+  height: 440px;
+  overflow-y: auto;
+  padding: 16px;
+  background: #f9fafb;
+  border: 1.5px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+  color: #333;
+  scrollbar-width: thin;
+  scrollbar-color: #007bff #e1e4ea;
+">
+  <!-- Messages will appear here -->
+</div>
+
+</div>
+<script src="chat_ko_lagi.js"></script>
+
+<script>
+    window.addEventListener("DOMContentLoaded", () => {
+  const welcomeDiv = document.getElementById("welcomeMessage");
+
+  const loginMode = localStorage.getItem("mode"); // 'seller' or 'user'
+  const loginByName = localStorage.getItem("user_data"); // person name or email
+  const isLoggedIn = localStorage.getItem("user_login_by") !== null;
+
+  if (isLoggedIn && loginMode && loginByName) {
+    const modeLabel = loginMode === "seller" ? "Sell" : "Buy";
+    welcomeDiv.textContent = `Welcome to ${modeLabel}, ${loginByName}`;
+  } else {
+    welcomeDiv.textContent = "";
+  }
+});
+
+ function redirectNoBack(url) {
+    window.location.replace(url); // replaces current page in history
+  }
+function dragElement(elmnt) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+  const header = document.getElementById("messageHeader");
+  if (header) {
+    header.onmousedown = dragMouseDown;
+  } else {
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+
+    // If clicked element is input, textarea, or contenteditable, do NOT drag
+    const target = e.target;
+    if (
+      target.tagName === "INPUT" || 
+      target.tagName === "TEXTAREA" || 
+      target.isContentEditable
+    ) {
+      return; // allow normal typing/focus
+    }
+
+    e.preventDefault();
+
+    // Get the initial mouse cursor position
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+
+    // Calculate new cursor position
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    // Set the element's new position
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+
+
+</script>
+
+
+
+  
+</div>
+
+<script>
+  function dragElement(elmnt, handle) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+    handle.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault();
+
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+
+      document.onmouseup = closeDragElement;
+      document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+
+      // Calculate new position within viewport bounds (optional)
+      let newTop = elmnt.offsetTop - pos2;
+      let newLeft = elmnt.offsetLeft - pos1;
+
+      // Optional: keep inside window boundaries
+      const minLeft = 0;
+      const minTop = 0;
+      const maxLeft = window.innerWidth - elmnt.offsetWidth;
+      const maxTop = window.innerHeight - elmnt.offsetHeight;
+
+      if (newLeft < minLeft) newLeft = minLeft;
+      if (newTop < minTop) newTop = minTop;
+      if (newLeft > maxLeft) newLeft = maxLeft;
+      if (newTop > maxTop) newTop = maxTop;
+
+      elmnt.style.top = newTop + "px";
+      elmnt.style.left = newLeft + "px";
+    }
+
+    function closeDragElement() {
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+
+  const historyContainer = document.getElementById("historyContainer");
+  const historyHeader = document.getElementById("historyHeader");
+
+  dragElement(historyContainer, historyHeader);
+
+  // Close button hides the container
+  document.getElementById("closeHistoryBtn").onclick = () => {
+    historyContainer.style.display = "none";
+  };
+  function dragElement(elmnt) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+  const header = document.getElementById("messageHeader");
+  if (header) {
+    header.onmousedown = dragMouseDown;
+  } else {
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+
+    // If clicked element is input, textarea, or contenteditable, do NOT drag
+    const target = e.target;
+    if (
+      target.tagName === "INPUT" || 
+      target.tagName === "TEXTAREA" || 
+      target.isContentEditable
+    ) {
+      return; // allow normal typing/focus
+    }
+
+    e.preventDefault();
+
+    // Get the initial mouse cursor position
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+
+    // Calculate new cursor position
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    // Set the element's new position
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+  function toggleSettingsMenu() {
+    const menu = document.getElementById("settingsMenu");
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+  }
+
+  // Optional: Hide the menu when clicking outside
+  document.addEventListener("click", function (event) {
+    const menu = document.getElementById("settingsMenu");
+    const button = event.target.closest("button[title='Settings']");
+    if (!menu.contains(event.target) && !button) {
+      menu.style.display = "none";
+    }
+  });
+
+  // Dummy logout function
+  function logout() {
+    localStorage.clear(); // or localStorage.removeItem("user_data");
+    alert("Logged out successfully!");
+    window.location.href = "home.html"; // Redirect after logout
+  }
+  function minimizeChat() {
+    document.getElementById('messagesArea').style.display = 'none';
+  }
+
+  function maximizeChat() {
+    document.getElementById('messagesArea').style.display = 'block';
+  }
+</script>
+
+
+
+
+  <div class="container">
+    
+    <div id="itemContainer"></div>
+  </div>
+
+  <div id="updatePanel">
+    <img id="updateImage" src="" alt="Item image" />
+    <h5 id="updateTitle"></h5>
+    <p id="updateDescription"></p>
+    <p><strong>Current Price:</strong> Rs. <span id="currentPrice"></span></p>
+    <input type="number" class="form-control mb-2" id="newPriceInput" placeholder="Enter new price" />
+    <button class="btn btn-primary w-100" id="updateButton">Update Price</button>
+  </div>
+  <footer class="footer">
+    <div class="footer-content">
+      <h3 data-i18n="site.footerTitle"></h3>
+      <div class="contact-info">
+        📧 <span data-i18n="site.emailLabel"></span>: <a href="mailto:secondarynp@gmail.com">secondarynp@gmail.com</a><br/>
+        📞 <span data-i18n="site.contactLabel"></span>: <a href="tel:+9779866297346">9866297346</a>
+      </div>
+      <div class="copyright" data-i18n="site.copyright"></div>
+    </div>
+    <a href="admin_login.html">.</a>
+  </footer>
+
+  <script>
+    const sellerEmail = localStorage.getItem("user_data");
+
+    fetch(`http://localhost:8080/api/items/by-seller?email=${sellerEmail}`)
+      .then(res => res.json())
+      .then(data => {
+        const container = document.getElementById("itemContainer");
+        container.innerHTML = "";
+
+        const categoryMap = {};
+        data.forEach(item => {
+          if (!categoryMap[item.category]) {
+            categoryMap[item.category] = [];
+          }
+          categoryMap[item.category].push(item);
+        });
+
+        for (const category in categoryMap) {
+          const categoryHeader = document.createElement("h4");
+          categoryHeader.textContent = category;
+          categoryHeader.className = "my-3";
+          container.appendChild(categoryHeader);
+
+          const row = document.createElement("div");
+          row.className = "row";
+
+          categoryMap[category].forEach(item => {
+            const card = document.createElement("div");
+            card.className = "col-md-4 mb-4";
+
+            card.innerHTML = `
+              <div class="card">
+                <img src="${item.imageUrl}" class="card-img-top" alt="${item.title}"/>
+                <div class="card-body">
+                  <h5 class="card-title">${item.title}</h5>
+                  <p class="card-text">${item.description}</p>
+                  <p><strong>Price:</strong> Rs. <span class="price">${item.price}</span></p>
+                  <p><strong>Admin Approval:</strong> ${item.adminapporal ? '✅ Approved' : '❌ Pending'}</p>
+                  <div class="btn-group w-100">
+                    <button class="btn btn-danger btn-sm" onclick="removeItem(${item.id})">Remove From Sell</button>
+                    <button class="btn btn-secondary btn-sm" onclick='showUpdatePanel(${JSON.stringify(item)})'>Update Price</button>
+                  </div>
+                </div>
+              </div>
+            `;
+
+            row.appendChild(card);
+          });
+
+          container.appendChild(row);
+        }
+      });
+
+    function removeItem(id) {
+      if (confirm("Are you sure you want to delete this item?")) {
+        fetch(`http://localhost:8080/api/items/${id}`, {
+          method: "DELETE"
+        })
+        .then(() => {
+          location.reload();
+        });
+      }
+    }
+
+    function showUpdatePanel(item) {
+      document.getElementById("updatePanel").style.display = "block";
+      document.getElementById("updateImage").src = item.imageUrl;
+      document.getElementById("updateTitle").textContent = item.title;
+      document.getElementById("updateDescription").textContent = item.description;
+      document.getElementById("currentPrice").textContent = item.price;
+      document.getElementById("newPriceInput").value = "";
+
+      document.getElementById("updateButton").onclick = function() {
+        const newPrice = document.getElementById("newPriceInput").value;
+        if (newPrice) {
+          fetch(`http://localhost:8080/api/items/${item.id}/update-price`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ price: newPrice })
+          })
+          .then(() => {
+            document.querySelectorAll(".price").forEach(priceEl => {
+              if (priceEl.textContent == item.price) {
+                priceEl.textContent = newPrice;
+              }
+            });
+            document.getElementById("updatePanel").style.display = "none";
+          });
+        }
+      }
+    }
+
+    // Drag functionality
+    const panel = document.getElementById("updatePanel");
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    panel.addEventListener("mousedown", function(e) {
+      isDragging = true;
+      offsetX = e.clientX - panel.offsetLeft;
+      offsetY = e.clientY - panel.offsetTop;
+    });
+
+    document.addEventListener("mousemove", function(e) {
+      if (isDragging) {
+        panel.style.left = (e.clientX - offsetX) + "px";
+        panel.style.top = (e.clientY - offsetY) + "px";
+      }
+    });
+
+    document.addEventListener("mouseup", function() {
+      isDragging = false;
+    });
+  </script>
+</body>
+</html>

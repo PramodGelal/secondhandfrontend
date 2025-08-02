@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel - Payment Details</title>
+  <style>
+        * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #111;
+      color: #fff;
+      margin: 0;
+      padding-top: 100px; /* space for fixed header */
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #000;
+      border-bottom: 3px solid #ffdd00;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      box-shadow: 0 4px 10px rgba(255, 221, 0, 0.3);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #ffdd00;
+      text-shadow: 1px 1px 3px #000;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #ffdd00;
+      font-weight: 600;
+      margin-left: 25px;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #fff;
+    }
+
+    h2 {
+      text-align: center;
+      color: #ffdd00;
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      text-shadow: 1px 1px 3px #000;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto 50px;
+      padding: 0 20px;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #111;
+      color: #ffdd00;
+      margin: 0;
+      padding-top: 100px; /* space for fixed header */
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #000;
+      border-bottom: 3px solid #ffdd00;
+      padding: 15px 30px;
+      text-align: center;
+      font-size: 26px;
+      font-weight: 700;
+      color: #ffdd00;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 10px rgba(255, 221, 0, 0.3);
+      z-index: 1000;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto 50px;
+      padding: 0 20px;
+    }
+
+    /* Controls container (search inputs + buttons) */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+
+    select, input[type="text"], button {
+      padding: 10px 15px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 2px solid #ffdd00;
+      background-color: #111;
+      color: #ffdd00;
+      font-weight: 600;
+      box-shadow: 0 0 8px #ffdd00aa;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    select {
+      cursor: pointer;
+      min-width: 180px;
+    }
+
+    select:focus,
+    input[type="text"]:focus {
+      background-color: #ffdd00;
+      color: #111;
+      outline: none;
+      box-shadow: 0 0 12px #ffdd00;
+    }
+
+    input[type="text"] {
+      flex: 1 1 250px;
+      min-width: 220px;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      min-width: 100px;
+      font-weight: 700;
+      background-color: #ffdd00;
+      color: #111;
+      box-shadow: 0 0 8px #ffdd00aa;
+      transition: filter 0.3s ease;
+    }
+
+    button:hover {
+      filter: brightness(110%);
+    }
+
+    /* Table container */
+    .table-container {
+      overflow-x: auto;
+      border: 2px solid #ffdd00;
+      border-radius: 15px;
+      box-shadow: 0 8px 15px rgba(255, 221, 0, 0.3);
+      background: linear-gradient(145deg, #222, #111);
+    }
+
+    table {
+      width: 100%;
+      min-width: 1100px;
+      border-collapse: collapse;
+      color: #ffdd00cc;
+      font-size: 15px;
+      border-radius: 15px;
+      overflow: hidden;
+    }
+
+    thead {
+      background-color: #ffdd00;
+      color: #111;
+      font-weight: 700;
+      text-align: left;
+      user-select: none;
+    }
+
+    thead th {
+      padding: 12px 15px;
+      border-bottom: 2px solid #333;
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1.5px solid #444;
+      transition: background-color 0.3s ease;
+      cursor: default;
+    }
+
+    tbody tr:hover {
+      background-color: #333300cc;
+    }
+
+    tbody td {
+      padding: 12px 15px;
+      white-space: nowrap;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      tbody td, thead th {
+        padding: 10px 8px;
+        font-size: 0.9rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        overflow-x: visible;
+      }
+    }
+  </style>
+</head>
+<body>
+    <header>
+    <div class="logo">SecondHand Market</div>
+    <nav>
+         <a href="admin.html">Users</a>
+      <a href="item_admin_control.html">Items</a>
+      <a href="notification_admin.html">Notice</a>
+      <a href="orderdetail_admin.html">Orders</a>
+      <a href="payment_his_admin.html">Payment</a>
+      <a href="report_response_admin.html">Report Handler</a>
+      <a href="admin_login.html">Logout</a>
+        
+    </nav>
+  </header>
+
+  
+
+  <div class="container">
+    <h2>Admin Panel - Payment Details</h2>
+    <div class="controls">
+      <select id="searchColumn">
+        <option value="id">Payment ID</option>
+        <option value="khaltiPaymentId">Khalti ID</option>
+        <option value="payment_id_">Ref ID</option>
+        <option value="item_name">Item Name</option>
+        <option value="sellerEmail">Seller Email</option>
+        <option value="payerEmail">Payer Email</option>
+      </select>
+
+      <input type="text" id="searchInput" placeholder="Enter search term..." />
+      <button onclick="searchData()">Search</button>
+      <button onclick="loadAllPayments()">Show All</button>
+    </div>
+
+    <div class="table-container">
+      <table id="paymentTable" aria-label="Payment Details Table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Khalti Payment ID</th>
+            
+            <th>Amount</th>
+            <th>Item Name</th>
+            <th>Seller Email</th>
+            <th>Payer Email</th>
+            <th>Payment Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Data will be inserted here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    async function loadAllPayments() {
+      try {
+        const res = await fetch('http://localhost:8080/api98/payments98/all');
+        if (!res.ok) throw new Error("Failed to load payments");
+        const data = await res.json();
+        displayPayments(data);
+      } catch (err) {
+        console.error(err);
+        alert("Failed to fetch payments. Check console for details.");
+      }
+    }
+
+    function displayPayments(data) {
+      const tbody = document.querySelector("#paymentTable tbody");
+      tbody.innerHTML = "";
+
+      data.forEach(payment => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${payment.id}</td>
+          <td>${payment.khaltiPaymentId || ''}</td>
+          
+          <td>Rs. ${payment.amount}</td>
+          <td>${payment.item_name || ''}</td>
+          <td>${payment.sellerEmail1 || ''}</td>
+          <td>${payment.payerEmail || ''}</td>
+          <td>${formatDate(payment.paymentDate)}</td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+    }
+
+    function searchData() {
+      const column = document.getElementById("searchColumn").value;
+      const searchTerm = document.getElementById("searchInput").value.toLowerCase();
+      const rows = document.querySelectorAll("#paymentTable tbody tr");
+
+      rows.forEach(row => {
+        const value = getCellValue(row, column)?.toLowerCase() || "";
+        row.style.display = value.includes(searchTerm) ? "" : "none";
+      });
+    }
+
+    function getCellValue(row, columnName) {
+      const mapping = {
+        id: 0,
+        khaltiPaymentId: 1,
+        
+        amount: 3,
+        item_name: 4,
+        sellerEmail: 5,
+        payerEmail: 6,
+        paymentDate: 7
+      };
+      const index = mapping[columnName];
+      return row.cells[index]?.textContent || "";
+    }
+
+    window.onload = loadAllPayments;
+  </script>
+</body>
+</html>

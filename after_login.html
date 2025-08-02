@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SecondHand</title>
+  <link rel="stylesheet" href="sell_body.css" />
+  <link rel="stylesheet" href="header-footer.css" />
+  <link rel="stylesheet" href="items.css" />
+  <link rel="stylesheet" href="navigation_bar.css" />
+  <link rel="icon" href="favicon-96x96.png" type="image/png" />
+  <style>
+    .error {
+      color: red;
+      display: none;
+      font-size: 0.9em;
+    }
+    .input-error {
+      border-color: red;
+    }
+    .input-success {
+      border-color: green;
+      transition: border-color 0.3s ease;
+    }
+    .button-loading {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+    .language-selector {
+      position: absolute;
+      top: 15px;
+      right: 150px;
+    }
+  </style>
+</head>
+<body>
+<div class="top-header" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 20px; background-color: black; color: white;">
+
+  <!-- Logo -->
+  <a href="home.html" style="text-decoration: none; color: yellow; font-weight: bold; font-size: 24px; cursor: pointer;">
+    <div class="logo" data-i18n="site.logo">SecondHand</div>
+  </a>
+
+  <!-- Search Bar + Language -->
+  <div style="display: flex; align-items: center; gap: 15px;">
+   
+  </div>
+
+<div class="right-section" style="display: flex; flex-direction: column; align-items: flex-end; gap: 12px; position: relative;">
+ <div> <button id="messageBtn" title="Messages"
+    style="font-size: 18px; background-color: black; color: yellow; border: 2px solid yellow; border-radius: 50%; width: 36px; height: 36px; cursor: pointer;">💬</button>
+ 
+
+    <button onclick="toggleSettingsMenu()" title="Settings"
+    style="font-size: 18px; background-color: black; color: yellow; border: 2px solid yellow; border-radius: 50%; width: 36px; height: 36px; cursor: pointer;">⚙️</button>
+
+  <div id="settingsMenu" style="display: none; position: absolute; top: 100%; right: 0; background: white; border: 1px solid #ccc; border-radius: 6px; box-shadow: 0 0 10px rgba(0,0,0,0.1); z-index: 1000;">
+    <a href="login1.html" data-i18n="site.signIn" style="display: block; padding: 8px 12px; text-decoration: none; color: black;">Sign in</a>
+     <a href="#" onclick="redirectNoBack('sellerlogin.html')"
+    style="display: block; padding: 8px 12px; text-decoration: none; color: black;">Login as seller</a>
+    <button onclick="logout()" style="display: block; width: 100%; text-align: left; padding: 8px 12px; border: none; background: none; color: black; cursor: pointer;">Log out</button>
+  </div></div>
+  <div id="welcomeMessage" style="color: yellow; font-size: 14px;">Welcome, User</div>
+
+ 
+</div>
+
+
+</div>
+
+
+
+
+<!-- NAVIGATION BAR -->
+<div class="nav-bar" style="background-color: rgb(223, 243, 110); padding: 10px 0;">
+  <div class="nav-links" style="display: flex; justify-content: left; gap: 30px; padding: 10px;">
+    <a href="sellerhome.html" data-i18n="site.sellerhome" style="text-decoration: none; color: black; font-weight: bold;">Listed Items</a>
+    <a href="seller_solded_item.html" data-i18n="site.Itemsold" style="text-decoration: none; color: black; font-weight: bold;">Item sold</a>
+    <a href="sellersupport.html" data-i18n="site.support" style="text-decoration: none; color: black; font-weight: bold;">Support</a>
+    <a href="after_login.html" style="text-decoration: none; color: black; font-weight: bold;">Sell here</a>
+  </div>
+</div>
+
+
+
+<!-- CHATBOX -->
+<div id="messageBox"
+  style="display: none; position: fixed; top: 80px; right: 20px; width: 350px; height: 500px; background: white; border: 2px solid yellow; box-shadow: 0 0 12px rgba(0,0,0,0.3); border-radius: 10px; z-index: 999; overflow: hidden; cursor: move;"
+  onmousedown="dragElement(this)">
+
+  <div style="display: flex; justify-content: space-between; align-items: center; background-color: yellow; padding: 6px 10px; border-bottom: 1px solid #ccc;">
+    <h4 id="chatname" style="color: black; margin: 0;">Your Messages</h4>
+    <div>
+     
+      <button title="Close" onclick="document.getElementById('messageBox').style.display='none'" style="background: none; border: none; font-weight: bold; cursor: pointer;">❌</button>
+    </div>
+  </div>
+
+  <div id="messagesArea" style="height: 440px; overflow-y: auto; padding: 10px;">
+    <!-- Messages will appear here -->
+  </div>
+</div>
+<script>
+
+
+function dragElement(elmnt) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+  const header = document.getElementById("messageHeader");
+  if (header) {
+    header.onmousedown = dragMouseDown;
+  } else {
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+
+    // If clicked element is input, textarea, or contenteditable, do NOT drag
+    const target = e.target;
+    if (
+      target.tagName === "INPUT" || 
+      target.tagName === "TEXTAREA" || 
+      target.isContentEditable
+    ) {
+      return; // allow normal typing/focus
+    }
+
+    e.preventDefault();
+
+    // Get the initial mouse cursor position
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+
+    // Calculate new cursor position
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    // Set the element's new position
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+
+
+</script>
+
+
+<script>
+  function dragElement(elmnt, handle) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+    handle.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+      e = e || window.event;
+      e.preventDefault();
+
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+
+      document.onmouseup = closeDragElement;
+      document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+      e = e || window.event;
+      e.preventDefault();
+
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+
+      // Calculate new position within viewport bounds (optional)
+      let newTop = elmnt.offsetTop - pos2;
+      let newLeft = elmnt.offsetLeft - pos1;
+
+      // Optional: keep inside window boundaries
+      const minLeft = 0;
+      const minTop = 0;
+      const maxLeft = window.innerWidth - elmnt.offsetWidth;
+      const maxTop = window.innerHeight - elmnt.offsetHeight;
+
+      if (newLeft < minLeft) newLeft = minLeft;
+      if (newTop < minTop) newTop = minTop;
+      if (newLeft > maxLeft) newLeft = maxLeft;
+      if (newTop > maxTop) newTop = maxTop;
+
+      elmnt.style.top = newTop + "px";
+      elmnt.style.left = newLeft + "px";
+    }
+
+    function closeDragElement() {
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+
+  const historyContainer = document.getElementById("historyContainer");
+  const historyHeader = document.getElementById("historyHeader");
+
+  dragElement(historyContainer, historyHeader);
+
+  // Close button hides the container
+  document.getElementById("closeHistoryBtn").onclick = () => {
+    historyContainer.style.display = "none";
+  };
+  function dragElement(elmnt) {
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+  const header = document.getElementById("messageHeader");
+  if (header) {
+    header.onmousedown = dragMouseDown;
+  } else {
+    elmnt.onmousedown = dragMouseDown;
+  }
+
+  function dragMouseDown(e) {
+    e = e || window.event;
+
+    // If clicked element is input, textarea, or contenteditable, do NOT drag
+    const target = e.target;
+    if (
+      target.tagName === "INPUT" || 
+      target.tagName === "TEXTAREA" || 
+      target.isContentEditable
+    ) {
+      return; // allow normal typing/focus
+    }
+
+    e.preventDefault();
+
+    // Get the initial mouse cursor position
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    document.onmouseup = closeDragElement;
+    document.onmousemove = elementDrag;
+  }
+
+  function elementDrag(e) {
+    e = e || window.event;
+    e.preventDefault();
+
+    // Calculate new cursor position
+    pos1 = pos3 - e.clientX;
+    pos2 = pos4 - e.clientY;
+
+    pos3 = e.clientX;
+    pos4 = e.clientY;
+
+    // Set the element's new position
+    elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+    elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+  }
+
+  function closeDragElement() {
+    document.onmouseup = null;
+    document.onmousemove = null;
+  }
+}
+ function toggleSettingsMenu() {
+    const menu = document.getElementById("settingsMenu");
+    menu.style.display = (menu.style.display === "block") ? "none" : "block";
+  }
+
+  // Optional: hide dropdown when clicking outside
+  document.addEventListener("click", function(event) {
+    const menu = document.getElementById("settingsMenu");
+    const button = event.target.closest("button");
+    if (!event.target.closest("#settingsMenu") && (!button || button.innerText !== "⚙️")) {
+      menu.style.display = "none";
+    }
+  });
+
+  function logout() {
+    // Your logout logic here
+    alert("Logging out...");
+  }
+
+  function minimizeChat() {
+    document.getElementById('messagesArea').style.display = 'none';
+  }
+
+  function maximizeChat() {
+    document.getElementById('messagesArea').style.display = 'block';
+  }
+</script>
+
+
+  <div class="main-content-wrapper">
+ 
+
+
+  <!-- Sell Section -->
+  <section class="sell-section">
+    <div class="sell-form-container">
+      <h2 data-i18n="sell.sellYourItem">📤 Sell Your Item</h2>
+      <form id="sellForm" enctype="multipart/form-data">
+
+        <div class="form-group">
+          <label for="name" data-i18n="sell.fullName">👤 Full Name</label>
+          <input type="text" id="name" name="name" required />
+          <div class="error" id="name-error">Please enter your full name</div>
+        </div>
+
+        <div class="form-group">
+          <div class="error" id="email-error">Please enter a valid email address</div>
+        </div>
+
+        <div class="form-group">
+          <label for="phone" data-i18n="sell.phone">📞 Contact Number</label>
+          <input type="tel" id="phone" name="phone" required />
+          <div class="error" id="phone-error">Please enter a valid phone number</div>
+        </div>
+
+        <div class="form-group">
+          <label for="address" data-i18n="sell.address">🏠 Address</label>
+          <input type="text" id="address" name="address" required />
+          <div class="error" id="address-error">Please enter your address</div>
+        </div>
+
+        <div class="form-group">
+          <label for="wallet" data-i18n="sell.wallet">💳 E-wallet Number(khalti)</label>
+          <input type="text" id="wallet" name="wallet" required />
+          <div class="error" id="wallet-error">Please enter your e-wallet number</div>
+        </div>
+
+        <div class="form-group">
+          <label for="holder" data-i18n="sell.walletHolder">👤 Wallet Holder Name</label>
+          <input type="text" id="holder" name="holder" required />
+          <div class="error" id="holder-error">Please enter wallet holder name</div>
+        </div>
+
+        <div class="form-group">
+          <label for="title" data-i18n="sell.itemTitle">📝 Item Title</label>
+          <input type="text" id="title" name="title" required />
+          <div class="error" id="title-error">Please enter an item title</div>
+        </div>
+
+        <div class="form-group">
+          <label for="description" data-i18n="sell.itemDescription">📄 Item Description</label>
+          <textarea id="description" name="description" rows="4" required></textarea>
+          <div class="error" id="description-error">Please enter an item description</div>
+        </div>
+
+        <div class="form-group">
+          <label for="category" data-i18n="sell.itemCategory">📂 Item Category</label>
+          <select id="category" name="category" required>
+            <option value="" data-i18n="sell.selectCategory">Select Category</option>
+            <option value="electronics" data-i18n="site.categoryElectronics">Electronics</option>
+            <option value="books" data-i18n="site.categoryBooks">Books</option>
+            <option value="clothing" data-i18n="site.categoryClothing">Clothing</option>
+          </select>
+          <div class="error" id="category-error">Please select a category</div>
+        </div>
+
+        <div class="form-group">
+          <label for="price" data-i18n="sell.price">💰 Price (in NPR)</label>
+          <input type="text" id="price" name="price" required />
+          <div class="error" id="price-error">Please enter a valid price</div>
+        </div>
+
+        <div class="form-group">
+          <label for="image" data-i18n="sell.uploadImage">🖼️ Upload Item Image</label>
+          <input type="file" id="image" name="image" accept="image/*" required />
+          <div class="error" id="image-error">Please upload an image</div>
+        </div>
+        <div class="form-group">
+  <label for="quantity" data-i18n="sell.quantity">📦 Quantity</label>
+  <input type="number" id="quantity" name="quantity" min="1" required />
+  <div class="error" id="quantity-error">Please enter quantity (1 or more)</div>
+</div>
+
+
+        <div class="form-group">
+          <label for="contactMethod" data-i18n="sell.preferredContact">📬 Preferred Contact Method</label>
+          <select id="contactMethod" name="contactMethod">
+            <option value="email" data-i18n="sell.contactEmail">Email</option>
+            <option value="phone" data-i18n="sell.contactPhone">Phone</option>
+            <option value="both" data-i18n="sell.contactBoth">Both</option>
+          </select>
+        </div>
+
+        <div class="checkbox">
+          <input type="checkbox" id="agreement" name="agreement" required />
+          <label for="agreement" data-i18n="sell.agreement">
+            I agree to the <a href="#">Terms and Conditions</a>.
+          </label>
+          <div class="error" id="agreement-error">You must agree to the terms</div>
+        </div>
+
+        <button type="submit" id="submitBtn" data-i18n="sell.submitBtn">🚀 Submit to Sell</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <h3 data-i18n="site.footerTitle">SecondHand</h3>
+      <div class="contact-info">
+        📧 <span data-i18n="site.emailLabel">Email</span>: <a href="mailto:secondarynp@gmail.com">secondarynp@gmail.com</a><br />
+        📞 <span data-i18n="site.contactLabel">Contact</span>: <a href="tel:+9779866297346">9866297346</a>
+      </div>
+      <div class="copyright" data-i18n="site.copyright">
+        &copy; 2025 SecondHand Market. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- i18next library -->
+  
+    <!-- i18next library -->
+<script>
+   window.addEventListener("DOMContentLoaded", () => {
+  const welcomeDiv = document.getElementById("welcomeMessage");
+
+  const loginMode = localStorage.getItem("mode"); // 'seller' or 'user'
+  const loginByName = localStorage.getItem("user_data"); // person name or email
+  const isLoggedIn = localStorage.getItem("user_login_by") !== null;
+
+  if (isLoggedIn && loginMode && loginByName) {
+    const modeLabel = loginMode === "seller" ? "Sell" : "Buy";
+    welcomeDiv.textContent = `Welcome to ${modeLabel}, ${loginByName}`;
+  } else {
+    welcomeDiv.textContent = "";
+  }
+});
+
+  function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user_login_by");
+    localStorage.removeItem("mode");
+    localStorage.removeItem("user_data");
+    localStorage.removeItem("selectedLanguage"); // Optional: clear selected language too
+  }
+
+  const translations = {
+    en: {
+      translation: {
+        site: {
+          logo: "SecondHand",
+          signIn: "Sign in",
+          footerTitle: "SecondHand",
+        },
+        sell: {
+          sellYourItem: "📤 Sell Your Item",
+        }
+      }
+    },
+    np: {
+      translation: {
+        site: {
+          logo: "सेकेन्डह्याण्ड",
+          signIn: "लगइन गर्नुहोस्",
+          footerTitle: "सेकेन्डह्याण्ड",
+        },
+        sell: {
+          sellYourItem: "📤 आफ्नो सामान बेच्नुहोस्",
+        }
+      }
+    }
+  };
+
+  // Get stored language or default to 'en'
+  const storedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+  i18next.init({ lng: storedLanguage, resources: translations }).then(() => {
+    document.querySelectorAll("[data-i18n]").forEach(el => {
+      el.innerHTML = i18next.t(el.getAttribute("data-i18n"));
+    });
+
+    // Set dropdown to match selected language
+    const languageSelect = document.getElementById('languageSelect');
+    if (languageSelect) {
+      languageSelect.value = storedLanguage;
+    }
+  });
+
+  // On language change
+  document.getElementById('languageSelect').addEventListener('change', (e) => {
+    const selectedLang = e.target.value;
+    localStorage.setItem('selectedLanguage', selectedLang); // store selection
+    i18next.changeLanguage(selectedLang).then(() => {
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        el.innerHTML = i18next.t(el.getAttribute("data-i18n"));
+      });
+    });
+  });
+
+
+  </script>
+
+  <!-- Form Submit Logic -->
+  <script>
+    document.getElementById('sellForm').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const form = document.getElementById('sellForm');
+      const formData = new FormData(form);
+      const email1 = localStorage.getItem("user_data");
+      formData.append("email", email1);
+      try {
+        const user_mode=localStorage.getItem('mode');
+
+           const user_login_by_name=localStorage.getItem('user_login_by');
+           if(user_login_by_name&&user_mode==='seller'){
+        const res = await fetch("http://localhost:8080/api/items", {
+          method: "POST",
+          body: formData,
+          
+          credentials: "include"
+        });
+   
+
+        if (res.ok) {
+          alert("Item listed successfully!");
+          window.location.href = "home.html";
+        } else if (res.status === 401) {
+          alert("Unauthorized! Please login.");
+          window.location.href = "login1.html";
+        } else {
+          const msg = await res.text();
+          alert("Error: " + msg);
+        }
+      }
+    else{
+
+      window.location.href='sell.html';
+    }
+    } catch (err) {
+        alert("Failed to submit: " + err.message);
+      }
+    });
+    
+document.getElementById('historyBtn').addEventListener('click', async () => {
+  const userEmail = localStorage.getItem('user_data'); // Assuming this stores the logged-in user email
+  if (!userEmail) {
+    alert('Please log in to view your history.');
+    return;
+  }
+
+  try {
+    const response = await fetch(`http://localhost:8080/api/items/history/${encodeURIComponent(userEmail)}`, {
+      method: 'GET',
+      credentials: 'include',
+    });
+
+    if (!response.ok) throw new Error('Failed to fetch history.');
+
+    const history = await response.json();
+
+    const container = document.getElementById('historyContainer');
+    const list = document.getElementById('historyList');
+    list.innerHTML = ''; // clear previous
+
+    if (history.length === 0) {
+      list.innerHTML = '<p>No purchase or selling history found.</p>';
+    } else {
+   history.forEach(record => {
+  const div = document.createElement('div');
+  div.id = `history-${record.paymentId}`; // use unique paymentId as id
+  div.className = "history-item";
+  div.style.display = "flex";
+  div.style.gap = "15px";
+  div.style.marginBottom = "15px";
+  div.style.borderBottom = "1px solid #ddd";
+  div.style.paddingBottom = "10px";
+  
+  div.innerHTML = `
+    <img src="${record.imageUrl}" alt="${record.title}" style="width:120px; height:auto; border-radius:8px; flex-shrink:0;" />
+    <div class="details" style="font-size:14px; color:#333;">
+      <strong>${record.title}</strong> (${record.category})<br>
+      <b>Price:</b> NPR ${record.price} <br>
+      <b>Buyer:</b> ${record.buyerEmail} <br>
+      <b>Seller:</b> ${record.sellerEmail} <br>
+      <b>Payment Date:</b> ${record.paymentDate ? new Date(record.paymentDate).toLocaleString() : 'N/A'}
+    </div>
+  `;
+  list.appendChild(div);
+});
+
+
+    }
+
+    container.style.display = 'block';
+  } catch (err) {
+    console.error(err);
+    alert('Error loading history. Please try again later.');
+  }
+});
+
+document.getElementById('closeHistoryBtn').addEventListener('click', () => {
+  document.getElementById('historyContainer').style.display = 'none';
+});
+// Close history container when clicking outside
+document.addEventListener('click', function(event) {
+  const historyContainer = document.getElementById('historyContainer');
+  const historyBtn = document.getElementById('historyBtn');
+  if (!historyContainer || !historyBtn) return;
+
+  // Check if click is inside history container or history button
+  const clickedInsideHistory = historyContainer.contains(event.target);
+  const clickedOnHistoryBtn = historyBtn.contains(event.target);
+
+  if (!clickedInsideHistory && !clickedOnHistoryBtn) {
+    // Clicked outside, so hide the history container
+    historyContainer.style.display = 'none';
+  }
+});
+
+
+  </script>
+  <script src="chat_ko_lagi.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+/* Navigation */
+.nav-bar {
+  background-color: #232f3e;
+  padding: 10px 25px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.nav-links a:hover {
+  color: #febd69;
+}

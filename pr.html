@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace Messaging</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script></script>
+</head>
+<body>
+    <div class="messaging-container">
+        <!-- Sidebar with conversations -->
+        <div class="conversation-sidebar">
+            <div class="sidebar-header">
+                <h3>Messages</h3>
+                <div class="unread-badge" id="totalUnread">0</div>
+            </div>
+            <div class="search-box">
+                <input type="text" placeholder="Search conversations...">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="conversation-list" id="conversationList">
+                <!-- Conversations will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Main chat area -->
+        <div class="chat-area" id="chatArea">
+            <div class="empty-state">
+                <i class="fas fa-comments"></i>
+                <p>Select a conversation to start messaging</p>
+            </div>
+            
+            <div class="active-chat" style="display: none;">
+                <div class="chat-header">
+                    <div class="recipient-info">
+                        <img src="https://via.placeholder.com/40" alt="Profile" class="profile-pic">
+                        <div>
+                            <h5 id="recipientName">Loading...</h5>
+                            <small id="itemTitle"></small>
+                        </div>
+                    </div>
+                    <div class="chat-actions">
+                        <button class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="messages-container" id="messagesContainer">
+                    <!-- Messages will appear here -->
+                </div>
+                
+                <div class="message-input-area">
+                    <div class="typing-indicator" id="typingIndicator">
+                        <span id="typingText"></span>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="messageInput" class="form-control" placeholder="Type your message...">
+                        <button class="btn btn-primary" id="sendButton">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.0/dist/sockjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/stomp-websocket@2.3.3/lib/stomp.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

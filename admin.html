@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Panel - View Users</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #111;
+      color: #fff;
+      margin: 0;
+      padding-top: 100px; /* space for fixed header */
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #000;
+      border-bottom: 3px solid #ffdd00;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      box-shadow: 0 4px 10px rgba(255, 221, 0, 0.3);
+    }
+
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #ffdd00;
+      text-shadow: 1px 1px 3px #000;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #ffdd00;
+      font-weight: 600;
+      margin-left: 25px;
+      font-size: 1.1rem;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #fff;
+    }
+
+    h2 {
+      text-align: center;
+      color: #ffdd00;
+      font-size: 2.5rem;
+      margin-bottom: 40px;
+      text-shadow: 1px 1px 3px #000;
+    }
+
+    .mode-group {
+      margin: 0 auto 50px;
+      border: 3px solid #ffdd00;
+      border-radius: 15px;
+      background: linear-gradient(145deg, #222, #111);
+      padding: 30px 40px;
+      max-width: 900px;
+      box-shadow: 0 8px 15px rgba(255, 221, 0, 0.3);
+    }
+
+    .mode-group h3 {
+      color: #ffdd00;
+      font-size: 1.8rem;
+      border-bottom: 2px solid #ffdd00;
+      margin-bottom: 20px;
+    }
+
+    .user-card {
+      border: 1.5px solid #444;
+      border-radius: 12px;
+      background-color: #1a1a1a;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+    }
+
+    .user-card p {
+      margin: 6px 0;
+    }
+
+    .user-card strong {
+      color: #ffdd00;
+    }
+
+    input[type="date"] {
+      padding: 8px;
+      margin-top: 10px;
+      margin-right: 15px;
+      border-radius: 6px;
+      border: 1.5px solid #ffdd00;
+      background-color: #111;
+      color: #ffdd00;
+      font-weight: 600;
+    }
+
+    input[type="date"]:focus {
+      background-color: #ffdd00;
+      color: #111;
+    }
+
+    button {
+      padding: 10px 18px;
+      margin: 10px 10px 0 0;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      color: #111;
+      background-color: #ffdd00;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      filter: brightness(110%);
+    }
+
+    button:nth-of-type(2) {
+      background-color: #333;
+      color: #ffdd00;
+      border: 2px solid #ffdd00;
+    }
+
+    button:nth-of-type(2):hover {
+      background-color: #ffdd00;
+      color: #111;
+    }
+
+    ul {
+      color: #ccc;
+      padding-left: 20px;
+    }
+
+    @media (max-width: 700px) {
+      nav a {
+        margin-left: 15px;
+        font-size: 1rem;
+      }
+
+      .mode-group {
+        padding: 20px;
+      }
+
+      input[type="date"],
+      button {
+        width: 100%;
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header with logo and navigation -->
+  <header>
+    <div class="logo">SecondHand Market</div>
+    <nav>
+      <a href="admin.html">Users</a>
+      <a href="item_admin_control.html">Items</a>
+      <a href="notification_admin.html">Notice</a>
+      <a href="orderdetail_admin.html">Orders</a>
+      <a href="payment_his_admin.html">Payment</a>
+      <a href="report_response_admin.html">Report Handler</a>
+      <a href="admin_login.html">Logout</a>
+    </nav>
+  </header>
+
+  <h2>Admin Panel - All Users</h2>
+  <div id="userContainer">Loading users...</div>
+
+  <script>
+    async function fetchUsers() {
+      try {
+        const response = await fetch("http://localhost:8080/admin/users");
+        if (!response.ok) throw new Error('Network response was not ok');
+        const users = await response.json();
+
+        const container = document.getElementById("userContainer");
+        container.innerHTML = "";
+
+        // Group users by mode
+        const grouped = {};
+        users.forEach(user => {
+          if (!grouped[user.mode]) {
+            grouped[user.mode] = [];
+          }
+          grouped[user.mode].push(user);
+        });
+
+        for (const mode in grouped) {
+          const modeDiv = document.createElement("div");
+          modeDiv.className = "mode-group";
+          modeDiv.innerHTML = `<h3>Mode: ${mode}</h3>`;
+
+          grouped[mode].forEach(user => {
+            const userDiv = document.createElement("div");
+            userDiv.className = "user-card";
+
+            const banHistoryList = user.banHistory && user.banHistory.length > 0
+              ? `<ul>${user.banHistory.map(dateStr => {
+                  const dateObj = new Date(dateStr);
+                  return `<li>${dateObj.toLocaleDateString(undefined, {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}</li>`;
+                }).join('')}</ul>`
+              : `<p>No bans yet</p>`;
+
+            userDiv.innerHTML = `
+              <p><strong>Username:</strong> ${user.username}</p>
+              <p><strong>Email:</strong> ${user.email}</p>
+              <p><strong>Address:</strong> ${user.address || 'N/A'}</p>
+              <p><strong>Banned:</strong> ${user.banned ? "Yes" : "No"}</p>
+              <p><strong>Ban Until:</strong> ${user.banUntil || "N/A"}</p>
+              <p><strong>Last Banned Date:</strong> ${user.lastBannedDate || "N/A"}</p>
+              <p><strong>Ban Count:</strong> ${user.banCount || 0}</p>
+              <p><strong>Ban History:</strong></p>
+              ${banHistoryList}
+              <input type="date" id="banDate-${user.mode}-${user.username}" />
+              <button onclick="banUser('${user.username}', '${user.mode}')">Ban User</button>
+              <button onclick="deleteUser('${user.username}', '${user.mode}')">Delete User</button>
+              <button onclick="clearBanHistory('${user.username}', '${user.mode}')">Clear Ban History</button>
+              <button onclick="decreaseBanCount('${user.username}', '${user.mode}')">Decrease Ban Count</button>
+              <button onclick="removeLastBannedDate('${user.username}', '${user.mode}')">Remove Last Banned Date</button>
+              <button onclick="unbanUser('${user.username}', '${user.mode}')">Unban User</button>
+            `;
+
+            modeDiv.appendChild(userDiv);
+          });
+
+          container.appendChild(modeDiv);
+        }
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        alert("Failed to fetch users.");
+        const container = document.getElementById("userContainer");
+        container.innerHTML = "<p style='color:red;'>Failed to load users.</p>";
+      }
+    }
+
+    async function deleteUser(username, mode) {
+      const user_mode = localStorage.getItem('mode');
+      const user_login_by_name = localStorage.getItem('user_login_by');
+
+      if (!(user_login_by_name && user_mode === 'admin')) {
+        alert("Not allowed in this mode. Redirecting to login...");
+        setTimeout(() => window.location.href = 'admin_login.html', 0);
+        return;
+      }
+
+      if (!confirm(`Are you sure you want to delete user "${username}" with mode "${mode}"?`)) return;
+
+      try {
+        const res = await fetch(`http://localhost:8080/admin/user/${encodeURIComponent(username)}?mode=${encodeURIComponent(mode)}`, {
+          method: "DELETE"
+        });
+        const msg = await res.text();
+        alert(msg);
+        fetchUsers();
+      } catch (error) {
+        alert("Failed to delete user.");
+      }
+    }
+
+    async function banUser(username, mode) {
+      const user_mode = localStorage.getItem('mode');
+      const user_login_by_name = localStorage.getItem('user_login_by');
+
+      if (!(user_login_by_name && user_mode === 'admin')) {
+        alert("Not allowed in this mode. Redirecting to login...");
+        setTimeout(() => window.location.href = 'admin_login.html', 0);
+        return;
+      }
+
+      const banDateInput = document.getElementById(`banDate-${mode}-${username}`);
+      const banDate = banDateInput ? banDateInput.value : "";
+      if (!banDate) {
+        alert("Please select a ban until date.");
+        return;
+      }
+
+      try {
+        const res = await fetch(`http://localhost:8080/admin/user/ban/${encodeURIComponent(username)}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ banUntil: banDate, mode: mode })
+        });
+        const msg = await res.text();
+        alert(msg);
+        fetchUsers();
+      } catch (error) {
+        alert("Failed to ban user.");
+      }
+    }
+
+    async function clearBanHistory(username, mode) {
+      const user_mode = localStorage.getItem('mode');
+      const user_login_by_name = localStorage.getItem('user_login_by');
+
+      if (!(user_login_by_name && user_mode === 'admin')) {
+        alert("Not allowed in this mode. Redirecting to login...");
+        setTimeout(() => window.location.href = 'admin_login.html', 0);
+        return;
+      }
+
+      if (!confirm(`Are you sure you want to clear ban history for user "${username}" with mode "${mode}"?`)) return;
+
+      try {
+        const res = await fetch(`http://localhost:8080/admin/user/banhistory/${encodeURIComponent(username)}`, {
+          method: "DELETE",
+        });
+        const msg = await res.text();
+        alert(msg);
+        fetchUsers();
+      } catch (error) {
+        alert("Failed to clear ban history.");
+      }
+    }
+
+    async function decreaseBanCount(username, mode) {
+      const user_mode = localStorage.getItem('mode');
+      const user_login_by_name = localStorage.getItem('user_login_by');
+
+      if (!(user_login_by_name && user_mode === 'admin')) {
+        alert("Not allowed in this mode. Redirecting to login...");
+        setTimeout(() => window.location.href = 'admin_login.html', 0);
+        return;
+      }
+
+      if (!confirm(`Are you sure you want to decrease ban count by 1 for user "${username}" with mode "${mode}"?`)) return;
+
+      try {
+        const res = await fetch(`http://localhost:8080/admin/user/bancount/decrease/${encodeURIComponent(username)}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({})
+        });
+        const msg = await res.text();
+        alert(msg);
+        fetchUsers();
+      } catch (error) {
+        alert("Failed to decrease ban count.");
+      }
+    }
+
+    async function removeLastBannedDate(username, mode) {
+      const user_mode = localStorage.getItem('mode');
+      const user_login_by_name = localStorage.getItem('user_login_by');
+
+      if (!(user_login_by_name && user_mode === 'admin')) {
+        alert("Not allowed in this mode. Redirecting to login...");
+        setTimeout(() => window.location.href = 'admin_login.html', 0);
+        return;
+      }
+
+      if (!confirm(`Are you sure you want to remove last banned date for user "${username}" with mode "${mode}"?`)) return;
+
+      try {
+        const res = await fetch(`http://localhost:8080/admin/user/clear-last-banned/${encodeURIComponent(username)}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({})
+        });
+        const msg = await res.text();
+        alert(msg);
+        fetchUsers();
+      } catch (error) {
+        alert("Failed to remove last banned date.");
+      }
+    }
+
+    async function unbanUser(username, mode) {
+      const user_mode = localStorage.getItem('mode');
+      const user_login_by_name = localStorage.getItem('user_login_by');
+
+      if (!(user_login_by_name && user_mode === 'admin')) {
+        alert("Not allowed in this mode. Redirecting to login...");
+        setTimeout(() => window.location.href = 'admin_login.html', 0);
+        return;
+      }
+
+      if (!confirm(`Are you sure you want to unban user "${username}" with mode "${mode}"?`)) return;
+
+      try {
+        const res = await fetch(`http://localhost:8080/admin/user/unban/${encodeURIComponent(username)}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({})
+        });
+        const msg = await res.text();
+        alert(msg);
+        fetchUsers();
+      } catch (error) {
+        alert("Failed to unban user.");
+      }
+    }
+
+    window.onload = fetchUsers;
+  </script>
+</body>
+</html>

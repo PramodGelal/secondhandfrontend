@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Payment Receipt - Second Hand Market</title>
+  <link rel="icon" href="favicon-96x96.png" type="image/png" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f2f5;
+      margin: 0;
+      padding: 40px 10px;
+    }
+
+    .receipt-container {
+      max-width: 700px;
+      margin: auto;
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    .receipt-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid #e0e0e0;
+      padding-bottom: 15px;
+      margin-bottom: 25px;
+    }
+
+    .branding {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .branding img {
+      height: 45px;
+      width: 45px;
+      border-radius: 50%;
+    }
+
+    .brand-name {
+      font-size: 20px;
+      font-weight: bold;
+      color: #5c2d91;
+    }
+
+    .status {
+      font-weight: bold;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status.success {
+      color: #28a745;
+    }
+
+    .status.failed {
+      color: #dc3545;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .receipt-details {
+      font-size: 16px;
+      color: #444;
+      line-height: 1.7;
+    }
+
+    .receipt-details .row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .label {
+      font-weight: 600;
+    }
+
+    .footer {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 14px;
+      color: #888;
+    }
+
+    .btn-container {
+      margin-top: 25px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 25px;
+      background-color: #5c2d91;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background-color: #4b2379;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="receipt-container" id="receipt">
+    <div class="receipt-header">
+      <div class="branding">
+        <img src="favicon-96x96.png" alt="Second Hand Market Logo" />
+        <div class="brand-name">Second Hand Market</div>
+      </div>
+      <div id="statusBox" class="status">
+        <!-- Status text injected by JS -->
+      </div>
+    </div>
+
+    <h2>Payment Receipt</h2>
+
+    <div class="receipt-details" id="receiptDetails">
+      Loading receipt details...
+    </div>
+
+    <div class="btn-container">
+      <a href="home.html" class="btn">Go to Homepage</a>
+      <button class="btn" onclick="downloadReceipt()">Download Receipt</button>
+    </div>
+
+    <div class="footer">
+      Thank you for using Second Hand Market. This is an auto-generated receipt.
+    </div>
+  </div>
+
+  <!-- Include html2pdf.js library -->
+  <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.min.js"></script>
+
+  <script>
+    function getQueryParam(key) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(key);
+    }
+
+    const pidx = getQueryParam("pidx");
+    const purchaseId = getQueryParam("purchase_order_id");
+    const item_title = getQueryParam("purchase_order_name");
+    const amountParam = getQueryParam("amount");
+    const item_price = amountParam ? ((amountParam +560)/ 100).toFixed(2) : "0.00";
+    const date = new Date().toLocaleString();
+
+    // Determine payment state
+    const isSuccess = purchaseId !== null && purchaseId !== "";
+    const state = isSuccess ? "Successful" : "Failed";
+
+    // Update status box with dynamic icon and color
+    const statusBox = document.getElementById("statusBox");
+    if (isSuccess) {
+      statusBox.innerHTML = "✅ Payment Successful";
+      statusBox.classList.add("success");
+      statusBox.classList.remove("failed");
+    } else {
+      statusBox.innerHTML = "❌ Payment Failed";
+      statusBox.classList.add("failed");
+      statusBox.classList.remove("success");
+    }
+
+    async function verifyKhaltiPayment(pidx) {
+      if (!isSuccess) return; // Only verify on success
+
+      try {
+        const response = await fetch("http://localhost:8080/api1/khalti1/verify?pidx=" + pidx, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ itemTitle: item_title })
+        });
+
+        const resultText = await response.text();
+        console.log("Khalti Verify Response:", resultText);
+
+        if (!response.ok) {
+          alert("Payment verification failed.");
+        }
+      } catch (error) {
+        console.error("Error verifying Khalti payment:", error);
+        alert("Something went wrong.");
+      }
+    }
+
+    verifyKhaltiPayment(pidx);
+
+    // Display receipt details (for both success and failure)
+    document.getElementById("receiptDetails").innerHTML = `
+      <div class="row"><span class="label">Product Name:</span><span>${item_title || "N/A"}</span></div>
+      <div class="row"><span class="label">Amount Paid:</span><span>Rs. ${item_price}</span></div>
+      <div class="row"><span class="label">Purchase ID:</span><span>${purchaseId || "N/A"}</span></div>
+      <div class="row"><span class="label">Payment Gateway:</span><span>Khalti</span></div>
+      <div class="row"><span class="label">Status:</span><span>${state}</span></div>
+      <div class="row"><span class="label">Date:</span><span>${date}</span></div>
+    `;
+
+    function downloadReceipt() {
+      const element = document.getElementById('receipt');
+      const opt = {
+        margin:       0.4,
+        filename:     `Payment_Receipt_${state}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2 },
+        jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+  </script>
+z
+</body>
+</html>

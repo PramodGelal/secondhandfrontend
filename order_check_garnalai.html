@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Order Shipping & Report</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      max-width: 600px;
+    }
+    label {
+      font-weight: bold;
+    }
+    textarea {
+      width: 100%;
+      font-size: 1rem;
+    }
+    select, input[type=number], button {
+      padding: 6px;
+      margin: 8px 0;
+      width: 100%;
+      font-size: 1rem;
+    }
+    button {
+      cursor: pointer;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .message {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    hr {
+      margin: 30px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Update Shipping Status</h1>
+  <label for="orderId">Order ID</label>
+  <input type="number" id="orderId" value="1" min="1" />
+
+  <label for="statusSelect">Shipping Status</label>
+  <select id="statusSelect">
+    <option value="PENDING_SHIPMENT">Pending Shipment</option>
+    <option value="SHIPPED">Shipped</option>
+    <option value="DELIVERED">Delivered</option>
+  </select>
+
+  <button onclick="updateShippingStatus()">Update Status</button>
+  <div id="statusMessage" class="message"></div>
+
+  <hr />
+
+  <h1>Report a Problem</h1>
+  <label for="reportText">Report Details</label>
+  <textarea id="reportText" rows="5" placeholder="Describe the problem..."></textarea>
+
+  <button onclick="submitReport()">Submit Report</button>
+  <div id="reportMessage" class="message"></div>
+
+  <script>
+    const backendUrl = 'http://localhost:8080/orders';
+
+    function updateShippingStatus() {
+      const orderId = document.getElementById('orderId').value;
+      const status = document.getElementById('statusSelect').value;
+      const statusMsg = document.getElementById('statusMessage');
+      statusMsg.textContent = '';
+
+      if (!orderId || orderId <= 0) {
+        statusMsg.textContent = 'Please enter a valid Order ID.';
+        statusMsg.style.color = 'red';
+        return;
+      }
+
+      fetch(`${backendUrl}/${orderId}/shipping-status?status=${status}`, {
+        method: 'PUT'
+      })
+        .then(async response => {
+          const text = await response.text();
+          if (response.ok) {
+            statusMsg.style.color = 'green';
+            statusMsg.textContent = text;
+          } else {
+            statusMsg.style.color = 'red';
+            statusMsg.textContent = text || 'Failed to update status.';
+          }
+        })
+        .catch(err => {
+          statusMsg.style.color = 'red';
+          statusMsg.textContent = 'Error: ' + err.message;
+        });
+    }
+
+    function submitReport() {
+      const orderId = document.getElementById('orderId').value;
+      const reportText = document.getElementById('reportText').value.trim();
+      const reportMsg = document.getElementById('reportMessage');
+      reportMsg.textContent = '';
+
+      if (!orderId || orderId <= 0) {
+        reportMsg.style.color = 'red';
+        reportMsg.textContent = 'Please enter a valid Order ID.';
+        return;
+      }
+      if (!reportText) {
+        reportMsg.style.color = 'red';
+        reportMsg.textContent = 'Report details cannot be empty.';
+        return;
+      }
+
+      fetch(`${backendUrl}/${orderId}/report`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: reportText
+      })
+        .then(async response => {
+          const text = await response.text();
+          if (response.ok) {
+            reportMsg.style.color = 'green';
+            reportMsg.textContent = text;
+            document.getElementById('reportText').value = ''; // clear textarea
+          } else {
+            reportMsg.style.color = 'red';
+            reportMsg.textContent = text || 'Failed to submit report.';
+          }
+        })
+        .catch(err => {
+          reportMsg.style.color = 'red';
+          reportMsg.textContent = 'Error: ' + err.message;
+        });
+    }
+  </script>
+
+</body>
+</html>
