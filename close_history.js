@@ -1,5 +1,5 @@
-const backendUrl = "http://localhost:8080/orders";
-const itemApiUrl = "http://localhost:8080/api/items";
+const backendUrl = "https://secondhandnab-production.up.railway.app/orders";
+const itemApiUrl = "https://secondhandnab-production.up.railway.app/api/items";
 
 document.getElementById('historyBtn').addEventListener('click', async () => {
   const userEmail = localStorage.getItem('user_data');

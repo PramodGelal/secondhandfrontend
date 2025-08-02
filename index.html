@@ -762,7 +762,7 @@ function dragElement(elmnt) {
             const email_buyer=localStorage.getItem('user_data');
            const user_login_by_name=localStorage.getItem('user_login_by');
            if(user_login_by_name&&user_mode==='user'){
-        const response = await fetch("http://localhost:8080/api/items/initiate-payment", {
+        const response = await fetch("https://secondhandnab-production.up.railway.app/api/items/initiate-payment", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -1016,7 +1016,7 @@ buyBtn.addEventListener('click', (e) => {
 
       async function loadItems() {
         try {
-          const res = await fetch('http://localhost:8080/api/items', {
+          const res = await fetch('https://secondhandnab-production.up.railway.app/api/items', {
             method: 'GET',
             credentials: 'include'
           });
@@ -1089,7 +1089,7 @@ const { id, title, price, quantity } = currentBuyItem;
 
 localStorage.setItem('deliveryInfo', JSON.stringify({ name, email1, phone, address }));
 
-fetch("http://localhost:8080/api12/orders", {
+fetch("https://secondhandnab-production.up.railway.app/api12/orders", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
