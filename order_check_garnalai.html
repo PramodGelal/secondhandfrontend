@@ -67,7 +67,9 @@
   <div id="reportMessage" class="message"></div>
 
   <script>
-    const backendUrl = 'http://localhost:8080/orders';
+    const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
+    const backendUrl = `${BASE_URL}/orders`;
 
     function updateShippingStatus() {
       const orderId = document.getElementById('orderId').value;

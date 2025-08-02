@@ -94,6 +94,8 @@
     </div>
   </div>
   <script>
+    const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
     document.getElementById("signup_form").addEventListener("submit", function (event) {
       event.preventDefault();
   
@@ -103,7 +105,7 @@
       const password = document.querySelector('[name="password"]').value;
   
       // Step 1: Send OTP to email
-      fetch("http://localhost:8080/api/send-otpseller", {
+      fetch(`${BASE_URL}/api/send-otpseller`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded"

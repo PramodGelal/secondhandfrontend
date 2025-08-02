@@ -90,13 +90,15 @@
   </div>
 
   <script>
+    const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
     document.getElementById("login_form").addEventListener("submit", function (event) {
       event.preventDefault();
 
       const email = document.querySelector('[name="email"]').value;
       const password = document.querySelector('[name="password"]').value;
 
-      fetch("http://localhost:8080/login", {
+      fetch(`${BASE_URL}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded"

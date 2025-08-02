@@ -452,6 +452,8 @@ function dragElement(elmnt) {
 
   <script src="https://unpkg.com/i18next@22.4.7/i18next.min.js"></script>
   <script>
+    const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
     function logout() {
       localStorage.removeItem("token");
       localStorage.removeItem("user_login_by");
@@ -465,7 +467,7 @@ function dragElement(elmnt) {
       const email = document.querySelector('[name="email"]').value;
       const password = document.querySelector('[name="password"]').value;
 
-      fetch("http://localhost:8080/api/loginSeller", {
+      fetch(`${BASE_URL}/api/loginSeller`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
@@ -504,7 +506,7 @@ function dragElement(elmnt) {
       }
 
       try {
-        const response = await fetch(`http://localhost:8080/api/items/history/${encodeURIComponent(userEmail)}`, {
+        const response = await fetch(`${BASE_URL}/api/items/history/${encodeURIComponent(userEmail)}`, {
           method: 'GET',
           credentials: 'include',
         });

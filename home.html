@@ -731,7 +731,8 @@ function dragElement(elmnt) {
   <script src="https://unpkg.com/i18next@22.4.7/i18next.min.js"></script>
 
   <script>
-   
+   const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
 
        function logout() {
    localStorage.removeItem("token");
@@ -743,7 +744,7 @@ function dragElement(elmnt) {
     welcomeDiv.textContent = "";
   }
   }
-    const IMAGE_BASE_URL = "http://localhost:8080/";
+    const IMAGE_BASE_URL = `${BASE_URL}/`;
     let allItems = [];
     const itemsPerPage = 10;
     const categoryPageIndex = {};
@@ -762,7 +763,7 @@ function dragElement(elmnt) {
             const email_buyer=localStorage.getItem('user_data');
            const user_login_by_name=localStorage.getItem('user_login_by');
            if(user_login_by_name&&user_mode==='user'){
-        const response = await fetch("http://localhost:8080/api/items/initiate-payment", {
+        const response = await fetch(`${BASE_URL}/api/items/initiate-payment`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -1016,7 +1017,7 @@ buyBtn.addEventListener('click', (e) => {
 
       async function loadItems() {
         try {
-          const res = await fetch('http://localhost:8080/api/items', {
+          const res = await fetch(`${BASE_URL}/api/items`, {
             method: 'GET',
             credentials: 'include'
           });
@@ -1089,7 +1090,7 @@ const { id, title, price, quantity } = currentBuyItem;
 
 localStorage.setItem('deliveryInfo', JSON.stringify({ name, email1, phone, address }));
 
-fetch("http://localhost:8080/api12/orders", {
+fetch(`${BASE_URL}/api12/orders`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({

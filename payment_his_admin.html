@@ -271,9 +271,11 @@
   </div>
 
   <script>
+    const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
     async function loadAllPayments() {
       try {
-        const res = await fetch('http://localhost:8080/api98/payments98/all');
+        const res = await fetch(`${BASE_URL}/api98/payments98/all`);
         if (!res.ok) throw new Error("Failed to load payments");
         const data = await res.json();
         displayPayments(data);

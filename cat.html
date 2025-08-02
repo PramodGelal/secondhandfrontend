@@ -403,6 +403,8 @@ function dragElement(elmnt) {
   <script src="https://unpkg.com/i18next@22.4.7/i18next.min.js"></script>
 
   <script>
+    const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
         window.addEventListener("DOMContentLoaded", () => {
   const welcomeDiv = document.getElementById("welcomeMessage");
 
@@ -551,7 +553,7 @@ i18next.init({
 
     // Load items from API
     function loadItems() {
-      fetch("http://localhost:8080/api/items")
+      fetch(`${BASE_URL}/api/items`)
         .then((res) => res.json())
         .then((data) => {
           // Ensure each item has a quantity property (default to 1 if not provided)
@@ -706,7 +708,7 @@ buyBtn.addEventListener('click', (event) => {
             const email_buyer=localStorage.getItem('user_data');
            const user_login_by_name=localStorage.getItem('user_login_by');
            if(user_login_by_name&&user_mode==='user'){
-        const response = await fetch("http://localhost:8080/api/items/initiate-payment", {
+        const response = await fetch(`${BASE_URL}/api/items/initiate-payment`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -774,7 +776,7 @@ document.getElementById('historyBtn').addEventListener('click', async () => {
   }
 
   try {
-    const response = await fetch(`http://localhost:8080/api/items/history/${encodeURIComponent(userEmail)}`, {
+    const response = await fetch(`${BASE_URL}/api/items/history/${encodeURIComponent(userEmail)}`, {
       method: 'GET',
       credentials: 'include',
     });
@@ -894,7 +896,7 @@ const { id, title, price, quantity } = currentBuyItem;
 
     // Save to localStorage
     localStorage.setItem('deliveryInfo', JSON.stringify({ name, email, phone, address }));
-    fetch("http://localhost:8080/api12/orders", {
+    fetch(`${BASE_URL}/api12/orders`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({

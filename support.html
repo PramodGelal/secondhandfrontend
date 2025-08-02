@@ -147,6 +147,8 @@
   </div>
 </div>
 <script>
+  const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
  function redirectNoBack(url) {
     window.location.replace(url); // replaces current page in history
   }
@@ -392,6 +394,7 @@ function dragElement(elmnt) {
   <!-- i18next library -->
   <script src="https://unpkg.com/i18next@22.4.7/i18next.min.js"></script>
   <script>
+    
         window.addEventListener("DOMContentLoaded", () => {
   const welcomeDiv = document.getElementById("welcomeMessage");
 
@@ -505,7 +508,7 @@ document.getElementById('historyBtn').addEventListener('click', async () => {
   }
 
   try {
-    const response = await fetch(`http://localhost:8080/api/items/history/${encodeURIComponent(userEmail)}`, {
+    const response = await fetch(`${BASE_URL}/api/items/history/${encodeURIComponent(userEmail)}`, {
       method: 'GET',
       credentials: 'include',
     });

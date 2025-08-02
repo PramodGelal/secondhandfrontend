@@ -153,6 +153,8 @@
   <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.min.js"></script>
 
   <script>
+    const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
     function getQueryParam(key) {
       const urlParams = new URLSearchParams(window.location.search);
       return urlParams.get(key);
@@ -185,7 +187,7 @@
       if (!isSuccess) return; // Only verify on success
 
       try {
-        const response = await fetch("http://localhost:8080/api1/khalti1/verify?pidx=" + pidx, {
+        const response = await fetch(`${BASE_URL}/api1/khalti1/verify?pidx=" + pidx`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json"

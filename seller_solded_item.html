@@ -434,10 +434,12 @@ function dragElement(elmnt) {
     <a href="admin_login.html">.</a>
   </footer>
   <script>
+    const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
     const sellerEmail = localStorage.getItem("user_data");
     const container = document.getElementById("order-container");
     const message = document.getElementById("message");
-    const backendUrl = 'http://localhost:8080/orders';
+    const backendUrl = `${BASE_URL}/orders`;
 
     async function fetchOrders(email) {
       if (!email) {
@@ -449,7 +451,7 @@ function dragElement(elmnt) {
       container.innerHTML = "";
 
       try {
-        const response = await fetch(`http://localhost:8080/api/seller/orders?email=${encodeURIComponent(email)}`);
+        const response = await fetch(`${BASE_URL}/api/seller/orders?email=${encodeURIComponent(email)}`);
         if (!response.ok) throw new Error("Failed to fetch orders");
         const data = await response.json();
 

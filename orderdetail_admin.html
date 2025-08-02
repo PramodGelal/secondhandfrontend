@@ -213,11 +213,13 @@
 </div>
 
 <script>
-  const backendUrl = "http://localhost:8080/orders";
+  const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
+  const backendUrl = `${BASE_URL}/orders`;
   let orders = [];
 
   async function fetchOrders() {
-    const res = await fetch("http://localhost:8080/admin/orders");
+    const res = await fetch(`${BASE_URL}/admin/orders`);
     orders = await res.json();
     renderTable(orders);
   }

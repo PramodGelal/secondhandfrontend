@@ -53,6 +53,8 @@
   </div>
 
   <script>
+    const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
     function verifyOtp() {
       const otp = document.getElementById("otp").value;
       const fullname = localStorage.getItem("fullname");
@@ -60,7 +62,7 @@
       const email = localStorage.getItem("email");
       const password = localStorage.getItem("password");
 
-      fetch("http://localhost:8080/api/signupSeller", {
+      fetch(`${BASE_URL}/api/signupSeller`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded"

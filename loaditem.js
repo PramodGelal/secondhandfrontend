@@ -1,7 +1,8 @@
-
+const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
       async function loadItems() {
         try {
-          const res = await fetch('http://localhost:8080/api/items', {
+          const res = await fetch(`${BASE_URL}/api/items`, {
             method: 'GET',
             credentials: 'include'
           });

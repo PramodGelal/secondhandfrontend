@@ -249,7 +249,8 @@
   <div id="userContainer"></div>
 
   <script>
-
+const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
     async function sendNotification() {
       const subject = document.getElementById("notifySubject").value.trim();
       const message = document.getElementById("notifyMessage").value.trim();
@@ -260,7 +261,7 @@
       }
 
       try {
-        const res = await fetch("http://localhost:8080/admin/notify-all", {
+        const res = await fetch(`${BASE_URL}/admin/notify-all`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ subject, message }),

@@ -181,9 +181,11 @@
   <div id="userContainer">Loading users...</div>
 
   <script>
+    const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
     async function fetchUsers() {
       try {
-        const response = await fetch("http://localhost:8080/admin/users");
+        const response = await fetch(`${BASE_URL}/admin/users`);
         if (!response.ok) throw new Error('Network response was not ok');
         const users = await response.json();
 
@@ -264,7 +266,7 @@
       if (!confirm(`Are you sure you want to delete user "${username}" with mode "${mode}"?`)) return;
 
       try {
-        const res = await fetch(`http://localhost:8080/admin/user/${encodeURIComponent(username)}?mode=${encodeURIComponent(mode)}`, {
+        const res = await fetch(`${BASE_URL}/admin/user/${encodeURIComponent(username)}?mode=${encodeURIComponent(mode)}`, {
           method: "DELETE"
         });
         const msg = await res.text();
@@ -293,7 +295,7 @@
       }
 
       try {
-        const res = await fetch(`http://localhost:8080/admin/user/ban/${encodeURIComponent(username)}`, {
+        const res = await fetch(`${BASE_URL}/admin/user/ban/${encodeURIComponent(username)}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ banUntil: banDate, mode: mode })
@@ -319,7 +321,7 @@
       if (!confirm(`Are you sure you want to clear ban history for user "${username}" with mode "${mode}"?`)) return;
 
       try {
-        const res = await fetch(`http://localhost:8080/admin/user/banhistory/${encodeURIComponent(username)}`, {
+        const res = await fetch(`${BASE_URL}/admin/user/banhistory/${encodeURIComponent(username)}`, {
           method: "DELETE",
         });
         const msg = await res.text();
@@ -343,7 +345,7 @@
       if (!confirm(`Are you sure you want to decrease ban count by 1 for user "${username}" with mode "${mode}"?`)) return;
 
       try {
-        const res = await fetch(`http://localhost:8080/admin/user/bancount/decrease/${encodeURIComponent(username)}`, {
+        const res = await fetch(`${BASE_URL}/admin/user/bancount/decrease/${encodeURIComponent(username)}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({})
@@ -369,7 +371,7 @@
       if (!confirm(`Are you sure you want to remove last banned date for user "${username}" with mode "${mode}"?`)) return;
 
       try {
-        const res = await fetch(`http://localhost:8080/admin/user/clear-last-banned/${encodeURIComponent(username)}`, {
+        const res = await fetch(`${BASE_URL}/admin/user/clear-last-banned/${encodeURIComponent(username)}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({})
@@ -395,7 +397,7 @@
       if (!confirm(`Are you sure you want to unban user "${username}" with mode "${mode}"?`)) return;
 
       try {
-        const res = await fetch(`http://localhost:8080/admin/user/unban/${encodeURIComponent(username)}`, {
+        const res = await fetch(`${BASE_URL}/admin/user/unban/${encodeURIComponent(username)}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({})

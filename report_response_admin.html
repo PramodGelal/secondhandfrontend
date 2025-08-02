@@ -109,12 +109,14 @@
   <div id="reportContainer">Loading reports...</div>
 
   <script>
+    const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
     async function loadReports() {
       const container = document.getElementById("reportContainer");
       container.innerHTML = "Loading...";
 
       try {
-        const res = await fetch("http://localhost:8080/orders/reports");
+        const res = await fetch(`${BASE_URL}/orders/reports`);
         const data = await res.json();
 
         const filteredReports = data.filter(r => r.reportMessage !== null);
@@ -161,7 +163,7 @@
       }
 
       try {
-        const res = await fetch(`http://localhost:8080/orders/report/${reportId}/response`, {
+        const res = await fetch(`${BASE_URL}/orders/report/${reportId}/response`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(message)

@@ -511,6 +511,8 @@ function dragElement(elmnt) {
 
   <!-- Form Submit Logic -->
   <script>
+      const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
     document.getElementById('sellForm').addEventListener('submit', async function (e) {
       e.preventDefault();
 
@@ -523,7 +525,7 @@ function dragElement(elmnt) {
 
            const user_login_by_name=localStorage.getItem('user_login_by');
            if(user_login_by_name&&user_mode==='seller'){
-        const res = await fetch("http://localhost:8080/api/items", {
+        const res = await fetch(`${BASE_URL}/api/items`, {
           method: "POST",
           body: formData,
           
@@ -559,7 +561,7 @@ document.getElementById('historyBtn').addEventListener('click', async () => {
   }
 
   try {
-    const response = await fetch(`http://localhost:8080/api/items/history/${encodeURIComponent(userEmail)}`, {
+    const response = await fetch(`${BASE_URL}/api/items/history/${encodeURIComponent(userEmail)}`, {
       method: 'GET',
       credentials: 'include',
     });

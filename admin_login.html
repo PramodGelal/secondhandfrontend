@@ -91,6 +91,8 @@
   </div>
 
   <script>
+    const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
     function logout() {
       localStorage.removeItem("token");
       localStorage.removeItem("user_login_by");
@@ -104,7 +106,7 @@
       const email = document.querySelector('[name="email"]').value;
       const password = document.querySelector('[name="password"]').value;
 
-      fetch("http://localhost:8080/api/loginadmin", {
+      fetch(`${BASE_URL}/api/loginadmin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded"

@@ -179,10 +179,11 @@
   <h2>✅ Approved Items</h2>
   <div id="approved-items" class="item-container"></div>
 
-  <script>
+  <script>const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
     async function fetchItems() {
       try {
-        const res = await fetch('http://localhost:8080/api/items/adminlaidata');
+        const res = await fetch(`${BASE_URL}/api/items/adminlaidata`);
         if (!res.ok) throw new Error('Failed to fetch items');
         const items = await res.json();
         displayItems(items);
@@ -227,7 +228,7 @@
 
     async function updateApproval(id, approved) {
       try {
-        const res = await fetch(`http://localhost:8080/api/items/approval/${id}`, {
+        const res = await fetch(`${BASE_URL}/api/items/approval/${id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ approved })
@@ -242,7 +243,7 @@
     async function deleteItem(id) {
       if (confirm('Are you sure you want to delete this item?')) {
         try {
-          const res = await fetch(`http://localhost:8080/api/items/${id}`, {
+          const res = await fetch(`${BASE_URL}/api/items/${id}`, {
             method: 'DELETE'
           });
           if (!res.ok) throw new Error('Failed to delete item');

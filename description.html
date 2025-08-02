@@ -943,6 +943,8 @@ function dragElement(elmnt) {
       localStorage.removeItem("user_data");
       window.location.href = 'login1.html';
     }
+     const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
 
     async function loadItemDetails() {
       try {
@@ -953,7 +955,7 @@ function dragElement(elmnt) {
           return;
         }
 
-        const response = await fetch(`http://localhost:8080/api/items/${itemId}`);
+        const response = await fetch(`${BASE_URL}/api/items/${itemId}`);
         if (!response.ok) throw new Error("Item not found");
 
         const item = await response.json();
@@ -1031,7 +1033,7 @@ document.getElementById('button_buy').addEventListener('click', (e) => {
         const user_login_by_name = localStorage.getItem('user_login_by');
         
         if (user_login_by_name && user_mode === 'user') {
-          const response = await fetch("http://localhost:8080/api/items/initiate-payment", {
+          const response = await fetch(`${BASE_URL}/api/items/initiate-payment`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
@@ -1109,7 +1111,7 @@ const { id, title, price, quantity } = currentBuyItem;
 
     // Save to localStorage
     localStorage.setItem('deliveryInfo', JSON.stringify({ name, email, phone, address }));
-    fetch("http://localhost:8080/api12/orders", {
+    fetch(`${BASE_URL}/api12/orders`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({

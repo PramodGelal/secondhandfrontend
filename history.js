@@ -1,5 +1,7 @@
 
-  const backendUrl = "http://localhost:8080/orders";
+  const BASE_URL = "http://localhost:8080/orders";
+  const backendUrl = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
 
   document.getElementById('historyBtn').addEventListener('click', async () => {
     const userEmail = localStorage.getItem('user_data');

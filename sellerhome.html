@@ -387,9 +387,11 @@ function dragElement(elmnt) {
   </footer>
 
   <script>
+    const BASE_URL = "https://secondhandnab-production.up.railway.app";
+    //${BASE_URL}
     const sellerEmail = localStorage.getItem("user_data");
 
-    fetch(`http://localhost:8080/api/items/by-seller?email=${sellerEmail}`)
+    fetch(`${BASE_URL}/api/items/by-seller?email=${sellerEmail}`)
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById("itemContainer");
@@ -441,7 +443,7 @@ function dragElement(elmnt) {
 
     function removeItem(id) {
       if (confirm("Are you sure you want to delete this item?")) {
-        fetch(`http://localhost:8080/api/items/${id}`, {
+        fetch(`${BASE_URL}/api/items/${id}`, {
           method: "DELETE"
         })
         .then(() => {

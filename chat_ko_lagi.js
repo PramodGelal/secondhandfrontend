@@ -122,8 +122,8 @@ document.getElementById("messageBtn").addEventListener("click", () => {
   connect(email_buyer);
 
   const fetchUrl = loginMode === "user"
-    ? `http://localhost:8080/api98/payments98/search98/by-payer98?payerEmail=${encodeURIComponent(email_buyer)}`
-    : `http://localhost:8080/api98/payments98/search98/by-seller98?sellerEmail=${encodeURIComponent(email_buyer)}`;
+    ? `${BASE_URL}/api98/payments98/search98/by-payer98?payerEmail=${encodeURIComponent(email_buyer)}`
+    : `${BASE_URL}/api98/payments98/search98/by-seller98?sellerEmail=${encodeURIComponent(email_buyer)}`;
 
   fetch(fetchUrl)
     .then(response => response.json())
